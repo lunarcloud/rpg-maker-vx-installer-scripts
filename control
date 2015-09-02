@@ -1,0 +1,10 @@
+Section: games
+Maintainer: aoeu
+Homepage: aoeu
+Package: aoeu
+Architecture: all
+Depends: wine
+Version: 1
+Description: aoeu
+
+
