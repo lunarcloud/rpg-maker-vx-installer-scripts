@@ -53,6 +53,7 @@ fi
 if [ -f ./company.png ]; then
 	cp ./company.png "$DEBIANNAME"/usr/share/pixmaps/"$COMPANY_LOWER_DASH".png
 fi
+cp ./game.png "$DEBIANNAME"/opt/"$PACKAGENAME"/
 cp ./app.desktop.temp "$DEBIANNAME"/usr/share/applications/"$PACKAGENAME".desktop
 
 # Build the package
