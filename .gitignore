@@ -1,3 +1,6 @@
 # Outputs
 control.temp
 app.desktop.temp
+gameinfo.conf
+*.kate-swp
+*~
