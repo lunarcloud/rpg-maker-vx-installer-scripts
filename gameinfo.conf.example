@@ -1,1 +1,5 @@
- 
+Company=John Doe Corp
+Maintainer=John Doe <john.doe@company.com>
+Homepage=https:\/\/example.com
+Description=An rpg maker game by john doe.
+Version=2015.08.25
