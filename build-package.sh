@@ -19,9 +19,10 @@ MAINTANER=$(grep 'Maintainer' ./gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr
 HOMEPAGE=$(grep 'Homepage' ./gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
 
 PACKAGENAME="$COMPANY_LOWER_UNDERSCORE"-"$TITLE_LOWER_DASH"
-DEBIANNAME="$PACKAGENAME"_all
+DEBIANNAME="$PACKAGENAME-$VERSION"_all
 
 # Create temp control file
+echo "Creating control file..."
 cp control control.temp
 `sed -i "s/Version: \(.*\)/Version: $VERSION/"  ./control.temp`
 `sed -i "s/Description: \(.*\)/Description: $DESCRIPTION/"  ./control.temp`
@@ -30,6 +31,7 @@ cp control control.temp
 `sed -i "s/Package: \(.*\)/Package: $PACKAGENAME/"  ./control.temp`
 
 # Create temp desktop file
+echo "Creating desktop file..."
 cp app.desktop app.desktop.temp
 `sed -i "s/Comment=\(.*\)/Comment=$DESCRIPTION/"  ./app.desktop.temp`
 `sed -i "s/Name=\(.*\)/Name=$TITLE_UPPER/"  ./app.desktop.temp`
@@ -38,13 +40,14 @@ cp app.desktop app.desktop.temp
 `sed -i "s/Icon=\(.*\)/Icon=\/opt\/"$PACKAGENAME"\/game.png/"  ./app.desktop.temp`
 
 # Create fakeroot
+echo "Creating fakeroot..."
 mkdir -p "$DEBIANNAME"/DEBIAN
 mkdir -p "$DEBIANNAME"/opt/"$PACKAGENAME"
 mkdir -p "$DEBIANNAME"/usr/share/applications/
 mkdir -p "$DEBIANNAME"/usr/share/pixmaps/
 
 # Copy file into them
-
+echo "Populating fakeroot..."
 cp ./control.temp "$DEBIANNAME"/DEBIAN/control
 cp -r "$GAMEFOLDER"/* "$DEBIANNAME"/opt/"$PACKAGENAME"/
 if [ -f ./license.txt ]; then
@@ -60,8 +63,10 @@ cp ./app.desktop.temp "$DEBIANNAME"/usr/share/applications/"$PACKAGENAME".deskto
 dpkg-deb --build "$DEBIANNAME" "$DEBIANNAME".deb
 
 # Cleanup
+echo "Cleaning up..."
 rm -r "$DEBIANNAME"
 
+echo "Finished!"
 exit 0
 
 
