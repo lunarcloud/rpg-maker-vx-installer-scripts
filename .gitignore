@@ -2,8 +2,14 @@
 control.temp
 app.desktop.temp
 gameinfo.conf
+company.png
+game.png
+zoogame
 *.kate-swp
 *~
+*_i386/
+*_amd64/
 mkxp-*
-mkxp.amd64
-mkxp.x86
+*.amd64
+*.x86
+*.deb

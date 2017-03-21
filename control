@@ -3,6 +3,7 @@ Maintainer: aoeu
 Homepage: aoeu
 Package: aoeu
 Architecture: all
+Depends:
 Recommends: fluidsynth
 Suggests: wine
 Version: 1
