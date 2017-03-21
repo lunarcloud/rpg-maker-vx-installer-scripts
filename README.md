@@ -3,9 +3,9 @@ Create debian packages for RPG Maker VX Ace games which use [mkxp](https://githu
 
 ## Instructions
   1. Drop your extracted game into this folder
-  2. Update the game.png
-  3. (Optional) update or remove the company.png
+  2. Create the game.png
+  3. (Optional) create the company.png
   4. (Optional) create a license.txt
-  5. Create/Update your gameinfo.conf
+  5. Create your gameinfo.conf
   6. Run build-package.sh
-  7. Test and distribute your deb file
+  7. Test and distribute your deb files
