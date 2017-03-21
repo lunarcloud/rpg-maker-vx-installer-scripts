@@ -74,7 +74,7 @@ cp ./script-dialog/script-ui.sh "$DEBIANNAME32"/opt/"$PACKAGENAME"/script-dialog
 `sed -i "s/Architecture: \(.*\)/Architecture: i386/"  "$DEBIANNAME32"/DEBIAN/control`
 
 if [ -f ./license.txt ]; then
-	cp -r ./license.txt "$DEBIANNAME32"/opt/"$PACKAGENAME"/LICENSE
+    cp -r ./license.txt "$DEBIANNAME32"/opt/"$PACKAGENAME"/LICENSE
 fi
 
 cp ./game.png "$DEBIANNAME32"/opt/"$PACKAGENAME"/
@@ -82,7 +82,7 @@ cp ./app.desktop.temp "$DEBIANNAME32"/usr/share/applications/"$PACKAGENAME".desk
 
 # Build the package
 echo "attempting to build $DEBIANNAME32.deb ..."
-dpkg-deb --build "$DEBIANNAME32" "$DEBIANNAME32".deb
+#dpkg-deb --build "$DEBIANNAME32" "$DEBIANNAME32".deb
 
 #Create 64bit
 
@@ -91,7 +91,7 @@ mv "$DEBIANNAME32" "$DEBIANNAME64"
 #switch mkxp versions
 rm "$DEBIANNAME64"/opt/"$PACKAGENAME"/"$EXECUTABLENAME".x86
 cp mkxp-*/mkxp.amd64      "$DEBIANNAME64"/opt/"$PACKAGENAME"/"$EXECUTABLENAME".amd64
-rm "$DEBIANNAME64"/opt/"$PACKAGENAME"/lib
+rm -r "$DEBIANNAME64"/opt/"$PACKAGENAME"/lib
 cp -r mkxp-*/lib64        "$DEBIANNAME64"/opt/"$PACKAGENAME"/lib64
 
 #fix architecture

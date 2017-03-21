@@ -13,3 +13,5 @@ mkxp-*
 *.amd64
 *.x86
 *.deb
+LICENSE-accepted
+license.txt
