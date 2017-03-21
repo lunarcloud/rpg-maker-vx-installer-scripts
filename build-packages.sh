@@ -9,6 +9,10 @@ fi
 # Get Variables
 GAMEFOLDER=$(find ./ -name 'Game.exe' -printf '%h\n' | sort -u | tr -d '\n' | tr -d '\r')
 
+if [ ! $GAMEFOLDER ]; then
+    echo "No game folder found"
+fi
+
 TITLE_UPPER=$(grep 'Title' "$GAMEFOLDER"/Game.ini | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
 TITLE_LOWER=$(echo $TITLE_UPPER  | tr '[:upper:]' '[:lower:]')
 TITLE_LOWER_UNDERSCORE=$(echo $TITLE_LOWER  | sed -e 's/ /_/g' | sed -e 's/\.//g')
