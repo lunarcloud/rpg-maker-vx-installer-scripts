@@ -6,3 +6,4 @@ Name=Application Launcher
 Comment=aoeu
 Exec=/opt/aoeu/game.sh
 Icon=/opt/aoue/icon.png
+Path=/opt/aoeu/

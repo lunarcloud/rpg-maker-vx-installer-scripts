@@ -42,7 +42,7 @@ cp control control.temp
 # Create temp desktop file
 echo "Creating desktop file..."
 cp app.desktop app.desktop.temp
-`sed -i "s/Comment=\(.*\)/Comment=$( echo "SHORT_DESCRIPTION" | sed -e 's/\./\\\./g')/" ./app.desktop.temp`
+`sed -i "s/Comment=\(.*\)/Comment=$( echo "$SHORT_DESCRIPTION" | sed -e 's/\./\\\./g')/" ./app.desktop.temp`
 `sed -i "s/Name=\(.*\)/Name=$TITLE_UPPER/"  ./app.desktop.temp`
 #`sed -i "s/Name=\(.*\)/Name=$TITLE_UPPER/"  ./app.desktop.temp`
 `sed -i "s/Exec=\(.*\)/Exec=\/opt\/"$PACKAGENAME"\/game.sh/"  ./app.desktop.temp`
