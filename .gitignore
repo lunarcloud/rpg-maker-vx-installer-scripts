@@ -4,3 +4,6 @@ app.desktop.temp
 gameinfo.conf
 *.kate-swp
 *~
+mkxp-*
+mkxp.amd64
+mkxp.x86

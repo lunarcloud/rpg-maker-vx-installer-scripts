@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [[ ! -e mkxp-20150204.tar.xz ]]; then
+    #Get copy of MKXP
+    wget http://ancurio.bplaced.net/mkxp/generic/mkxp-20150204.tar.xz # or latest version
+    tar xf mkxp*.tar.xz
+fi
+
 # Get Variables
 GAMEFOLDER=$(find ./ -name 'Game.exe' -printf '%h\n' | sort -u | tr -d '\n' | tr -d '\r')
 
@@ -36,7 +42,7 @@ cp app.desktop app.desktop.temp
 `sed -i "s/Comment=\(.*\)/Comment=$DESCRIPTION/"  ./app.desktop.temp`
 `sed -i "s/Name=\(.*\)/Name=$TITLE_UPPER/"  ./app.desktop.temp`
 `sed -i "s/Name=\(.*\)/Name=$TITLE_UPPER/"  ./app.desktop.temp`
-`sed -i "s/Exec=\(.*\)/Exec=wine \/opt\/"$PACKAGENAME"\/Game.exe/"  ./app.desktop.temp`
+`sed -i "s/Exec=\(.*\)/Exec=wine \/opt\/"$PACKAGENAME"\/game.sh/"  ./app.desktop.temp`
 `sed -i "s/Icon=\(.*\)/Icon=\/opt\/"$PACKAGENAME"\/game.png/"  ./app.desktop.temp`
 
 # Create fakeroot
@@ -50,12 +56,21 @@ mkdir -p "$DEBIANNAME"/usr/share/pixmaps/
 echo "Populating fakeroot..."
 cp ./control.temp "$DEBIANNAME"/DEBIAN/control
 cp -r "$GAMEFOLDER"/* "$DEBIANNAME"/opt/"$PACKAGENAME"/
+cp -r mkxp-*/* "$DEBIANNAME"/opt/"$PACKAGENAME"/
+cp mkxp.conf "$DEBIANNAME"/opt/"$PACKAGENAME"/
+
+#Copy script-dialog
+mkdir "$DEBIANNAME"/opt/"$PACKAGENAME"/script-dialog
+cp ./script-dialog/script-ui.sh "$DEBIANNAME"/opt/"$PACKAGENAME"/script-dialog/
+
+# rename mkxp files
+mv "$DEBIANNAME"/opt/"$PACKAGENAME"/mkxp.amd64 "$DEBIANNAME"/opt/"$PACKAGENAME"/"$PACKAGENAME".amd64
+mv "$DEBIANNAME"/opt/"$PACKAGENAME".x86 "$DEBIANNAME"/opt/"$PACKAGENAME"/"$PACKAGENAME".x86
+
 if [ -f ./license.txt ]; then
 	cp -r ./license.txt "$DEBIANNAME"/opt/"$PACKAGENAME"/LICENSE
 fi
-if [ -f ./company.png ]; then
-	cp ./company.png "$DEBIANNAME"/usr/share/pixmaps/"$COMPANY_LOWER_DASH".png
-fi
+
 cp ./game.png "$DEBIANNAME"/opt/"$PACKAGENAME"/
 cp ./app.desktop.temp "$DEBIANNAME"/usr/share/applications/"$PACKAGENAME".desktop
 

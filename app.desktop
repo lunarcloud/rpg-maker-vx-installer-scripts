@@ -4,5 +4,5 @@ Type=Application
 Categories=Game;
 Name=Application Launcher
 Comment=aoeu
-Exec=wine /opt/aoeu/Game.exe
+Exec=wine /opt/aoeu/game.sh
 Icon=/opt/aoue/icon.png
