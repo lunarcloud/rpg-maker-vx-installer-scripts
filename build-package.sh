@@ -82,7 +82,7 @@ cp ./app.desktop.temp "$DEBIANNAME32"/usr/share/applications/"$PACKAGENAME".desk
 
 # Build the package
 echo "attempting to build $DEBIANNAME32.deb ..."
-#dpkg-deb --build "$DEBIANNAME32" "$DEBIANNAME32".deb
+dpkg-deb --build "$DEBIANNAME32" "$DEBIANNAME32".deb
 
 #Create 64bit
 
