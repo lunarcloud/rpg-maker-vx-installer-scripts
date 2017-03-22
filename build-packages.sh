@@ -6,8 +6,14 @@ if [[ ! -e mkxp-20150204.tar.xz ]]; then
     tar xf mkxp*.tar.xz
 fi
 
+if [[ $# -eq 0 ]] ; then
+    DATA_DIR="."
+else
+    DATA_DIR="$1"
+fi
+
 # Get Variables
-GAMEFOLDER=$(find ./ -name 'Game.exe' -printf '%h\n' | sort -u | tr -d '\n' | tr -d '\r')
+GAMEFOLDER=$(find $DATA_DIR/ -name 'Game.exe' -printf '%h\n' | sort -u | tr -d '\n' | tr -d '\r')
 
 if [ ! $GAMEFOLDER ]; then
     echo "No game folder found"
@@ -18,16 +24,16 @@ TITLE_LOWER=$(echo $TITLE_UPPER  | tr '[:upper:]' '[:lower:]')
 TITLE_LOWER_UNDERSCORE=$(echo $TITLE_LOWER  | sed -e 's/ /_/g' | sed -e 's/\.//g')
 TITLE_LOWER_DASH=$(echo $TITLE_LOWER  | sed -e 's/ /-/g' | sed -e 's/\.//g')
 
-COMPANY_UPPER=$(grep 'Company' ./gameinfo.conf | cut -d'=' -f 2- | tr -d '\n' | tr -d '\r')
+COMPANY_UPPER=$(grep 'Company' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2- | tr -d '\n' | tr -d '\r')
 COMPANY_LOWER=$(echo $COMPANY_UPPER  | tr '[:upper:]' '[:lower:]')
 COMPANY_LOWER_UNDERSCORE=$(echo $COMPANY_LOWER  | sed -e 's/ /_/g')
 COMPANY_LOWER_DASH=$(echo $COMPANY_LOWER  | sed -e 's/ /-/g')
 
-VERSION=$(grep 'Version' ./gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
-SHORT_DESCRIPTION=$(grep 'Description' ./gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
-DESCRIPTION=$(sed -n '/Description/,$p' ./gameinfo.conf | cut -d'=' -f 2- | sed ':a;N;$!ba;s/\n/\\n\t/g')
-MAINTANER=$(grep 'Maintainer' ./gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
-HOMEPAGE=$(grep 'Homepage' ./gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
+VERSION=$(grep 'Version' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
+SHORT_DESCRIPTION=$(grep 'Description' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
+DESCRIPTION=$(sed -n '/Description/,$p' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2- | sed ':a;N;$!ba;s/\n/\\n\t/g')
+MAINTANER=$(grep 'Maintainer' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
+HOMEPAGE=$(grep 'Homepage' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
 
 PACKAGENAME="$COMPANY_LOWER_DASH"-"$TITLE_LOWER_DASH"
 EXECUTABLENAME="$TITLE_LOWER_DASH"
@@ -48,7 +54,6 @@ echo "Creating desktop file..."
 cp app.desktop app.desktop.temp
 `sed -i "s/Comment=\(.*\)/Comment=$( echo "$SHORT_DESCRIPTION" | sed -e 's/\./\\\./g')/" ./app.desktop.temp`
 `sed -i "s/Name=\(.*\)/Name=$TITLE_UPPER/"  ./app.desktop.temp`
-#`sed -i "s/Name=\(.*\)/Name=$TITLE_UPPER/"  ./app.desktop.temp`
 `sed -i "s/Exec=\(.*\)/Exec=\/opt\/"$PACKAGENAME"\/game.sh/"  ./app.desktop.temp`
 `sed -i "s/Icon=\(.*\)/Icon=\/opt\/"$PACKAGENAME"\/game.png/"  ./app.desktop.temp`
 
@@ -77,11 +82,15 @@ cp ./script-dialog/script-ui.sh "$DEBIANNAME32"/opt/"$PACKAGENAME"/script-dialog
 #fix architecture
 `sed -i "s/Architecture: \(.*\)/Architecture: i386/"  "$DEBIANNAME32"/DEBIAN/control`
 
-if [ -f ./license.txt ]; then
-    cp -r ./license.txt "$DEBIANNAME32"/opt/"$PACKAGENAME"/LICENSE
+if [ -f $DATA_DIR/license.txt ]; then
+    cp -r $DATA_DIR/license.txt "$DEBIANNAME32"/opt/"$PACKAGENAME"/LICENSE
 fi
 
-cp ./game.png "$DEBIANNAME32"/opt/"$PACKAGENAME"/
+if [ -f $DATA_DIR/company.png ]; then
+    cp $DATA_DIR/company.png "$DEBIANNAME32"/opt/"$PACKAGENAME"/
+fi
+
+cp $DATA_DIR/game.png "$DEBIANNAME32"/opt/"$PACKAGENAME"/
 cp ./app.desktop.temp "$DEBIANNAME32"/usr/share/applications/"$PACKAGENAME".desktop
 
 # Build the package
