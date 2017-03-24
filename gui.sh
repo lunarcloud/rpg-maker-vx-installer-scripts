@@ -20,6 +20,10 @@ if [ "$DATA_DIR" == "" ]; then
   exit 0;
 fi
 
+if [[ -f "$DATA_DIR/game.png" ]]; then
+    WINDOW_ICON="$DATA_DIR/game.png"
+fi
+
 GAMEFOLDER=$(find "$DATA_DIR" ! -path "*.app*" -name 'Game.exe' -printf '%h\n' | sort -ur | tr -d '\n' | tr -d '\r')
 
 if [[ ! -d "$GAMEFOLDER" ]]; then
