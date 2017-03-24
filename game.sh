@@ -51,7 +51,7 @@ fi
 if command -v wine 2>/dev/null; then # have wine
     if [ $MKXP_SUPPORT == true ] ; then # also have mkxp executable
         ACTIVITY="Runtime Type"
-        ANSWER=$(radiolist "How would you like to run the application? " 4  \
+        ANSWER=$(radiolist "How would you like to run the application? " 2  \
                 "mkxp" "MKXP: Native APIs" ON\
                 "wine" "Wine: Original Windows APIs" OFF )
         if [ ${ANSWER} == 'wine' ]; then # chose wine

@@ -15,3 +15,8 @@ mkxp-*
 *.deb
 LICENSE-accepted
 license.txt
+*.exe
+*.app
+*.zip
+dmg-contents/License.txt
+*.nsi

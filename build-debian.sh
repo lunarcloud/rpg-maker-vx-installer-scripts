@@ -10,13 +10,19 @@ if [[ $# -eq 0 ]] ; then
     DATA_DIR="."
 else
     DATA_DIR="$1"
+    ARCH="$2"
+fi
+
+if [ "$ARCH" != "32" ] && [ "$ARCH" != "64" ] && [ "$ARCH" != "both" ]; then
+    ARCH="both"
 fi
 
 # Get Variables
-GAMEFOLDER=$(find $DATA_DIR/ -name 'Game.exe' -printf '%h\n' | sort -u | tr -d '\n' | tr -d '\r')
+GAMEFOLDER=$(find "$DATA_DIR" ! -path "*.app*" -name 'Game.exe' -printf '%h\n' | sort -ur | tr -d '\n' | tr -d '\r')
 
-if [ ! $GAMEFOLDER ]; then
-    echo "No game folder found"
+if [[ ! -d "$GAMEFOLDER" ]]; then
+    echo "No game folder found inside \"$DATA_DIR\""
+    exit 404;
 fi
 
 TITLE_UPPER=$(grep 'Title' "$GAMEFOLDER"/Game.ini | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
@@ -71,7 +77,7 @@ echo "Populating fakeroot..."
 cp ./control.temp       "$DEBIANNAME32"/DEBIAN/control
 cp -r "$GAMEFOLDER"/*   "$DEBIANNAME32"/opt/"$PACKAGENAME"/
 cp game.sh              "$DEBIANNAME32"/opt/"$PACKAGENAME"/
-cp mkxp.conf            "$DEBIANNAME32"/opt/"$PACKAGENAME"/
+cp mkxp.linux.conf      "$DEBIANNAME32"/opt/"$PACKAGENAME"/mkxp.conf
 cp -r mkxp-*/lib        "$DEBIANNAME32"/opt/"$PACKAGENAME"/
 cp mkxp-*/mkxp.x86      "$DEBIANNAME32"/opt/"$PACKAGENAME"/"$EXECUTABLENAME".x86
 
@@ -93,33 +99,37 @@ fi
 cp $DATA_DIR/game.png "$DEBIANNAME32"/opt/"$PACKAGENAME"/
 cp ./app.desktop.temp "$DEBIANNAME32"/usr/share/applications/"$PACKAGENAME".desktop
 
-# Build the package
-echo "attempting to build $DEBIANNAME32.deb ..."
-dpkg-deb --build "$DEBIANNAME32" "$DEBIANNAME32".deb
+
+if [ "$ARCH" == "32" ] || && [ "$ARCH" == "both" ]; then
+    # Build the package
+    echo "attempting to build $DEBIANNAME32.deb ..."
+    dpkg-deb --build "$DEBIANNAME32" "$DEBIANNAME32".deb
+fi
 
 #Create 64bit
 
 mv "$DEBIANNAME32" "$DEBIANNAME64"
 
-#switch mkxp versions
-rm "$DEBIANNAME64"/opt/"$PACKAGENAME"/"$EXECUTABLENAME".x86
-cp mkxp-*/mkxp.amd64      "$DEBIANNAME64"/opt/"$PACKAGENAME"/"$EXECUTABLENAME".amd64
-rm -r "$DEBIANNAME64"/opt/"$PACKAGENAME"/lib
-cp -r mkxp-*/lib64        "$DEBIANNAME64"/opt/"$PACKAGENAME"/lib64
+if [ "$ARCH" == "64" ] || && [ "$ARCH" == "both" ]; then
+    #switch mkxp versions
+    rm "$DEBIANNAME64"/opt/"$PACKAGENAME"/"$EXECUTABLENAME".x86
+    cp mkxp-*/mkxp.amd64      "$DEBIANNAME64"/opt/"$PACKAGENAME"/"$EXECUTABLENAME".amd64
+    rm -r "$DEBIANNAME64"/opt/"$PACKAGENAME"/lib
+    cp -r mkxp-*/lib64        "$DEBIANNAME64"/opt/"$PACKAGENAME"/lib64
 
-#fix architecture
-`sed -i "s/Architecture: \(.*\)/Architecture: amd64/"  "$DEBIANNAME64"/DEBIAN/control`
+    #fix architecture
+    `sed -i "s/Architecture: \(.*\)/Architecture: amd64/"  "$DEBIANNAME64"/DEBIAN/control`
 
-# Build the package
-echo "attempting to build $DEBIANNAME64.deb ..."
-dpkg-deb --build "$DEBIANNAME64" "$DEBIANNAME64".deb
+    # Build the package
+    echo "attempting to build $DEBIANNAME64.deb ..."
+    dpkg-deb --build "$DEBIANNAME64" "$DEBIANNAME64".deb
+fi
 
 # Cleanup
 echo "Cleaning up..."
 rm -r "$DEBIANNAME64"
+rm control.temp
+rm app.desktop.temp
 
-
-echo "Finished!"
-exit 0
-
+exit 0;
 
