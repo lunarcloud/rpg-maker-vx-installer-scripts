@@ -7,11 +7,14 @@ relaunchIfNotVisible
 APP_NAME="Test Script"
 WINDOW_ICON="$CURRENT_DIR/game.png.example"
 
-ACTIVITY="Select the gameinfo.conf"
 
-messagebox "Select the gameinfo.conf file."
-
-DATA_DIR=$(dirname "$(filepicker "$CURRENT_DIR" "open")")
+if [[ $# -eq 0 ]] ; then
+  ACTIVITY="Data Directory Discovery"
+  messagebox "Select gameinfo.conf"
+  DATA_DIR=$(dirname "$(filepicker "$CURRENT_DIR" "open")")
+else
+    DATA_DIR="$1"
+fi
 
 if [ "$DATA_DIR" == "" ]; then
   exit 0;

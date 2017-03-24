@@ -99,8 +99,7 @@ fi
 cp $DATA_DIR/game.png "$DEBIANNAME32"/opt/"$PACKAGENAME"/
 cp ./app.desktop.temp "$DEBIANNAME32"/usr/share/applications/"$PACKAGENAME".desktop
 
-
-if [ "$ARCH" == "32" ] || && [ "$ARCH" == "both" ]; then
+if [ "$ARCH" == "32" ] || [ "$ARCH" == "both" ]; then
     # Build the package
     echo "attempting to build $DEBIANNAME32.deb ..."
     dpkg-deb --build "$DEBIANNAME32" "$DEBIANNAME32".deb
@@ -110,7 +109,7 @@ fi
 
 mv "$DEBIANNAME32" "$DEBIANNAME64"
 
-if [ "$ARCH" == "64" ] || && [ "$ARCH" == "both" ]; then
+if [ "$ARCH" == "64" ] || [ "$ARCH" == "both" ]; then
     #switch mkxp versions
     rm "$DEBIANNAME64"/opt/"$PACKAGENAME"/"$EXECUTABLENAME".x86
     cp mkxp-*/mkxp.amd64      "$DEBIANNAME64"/opt/"$PACKAGENAME"/"$EXECUTABLENAME".amd64
