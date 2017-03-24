@@ -1,0 +1,3 @@
+[submodule "script-dialog"]
+	path = script-dialog
+	url = https://github.com/lunarcloud/script-dialog.git
