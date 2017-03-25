@@ -1,5 +1,6 @@
-# rpg-vx-ace-deb-creator
-Create debian packages for RPG Maker VX Ace games which use [mkxp](https://github.com/Ancurio/mkxp) and optionally wine.
+# RPG Maker XP / VX / VX Ace Installer Creation Scripts
+Create installers for RPG Maker XP or VX (Ace) games for Windows, Mac, and Linux (Debian / Ubuntu).
+On Linux and Mac, [mkxp](https://github.com/Ancurio/mkxp) is used to create native applications. On Linux, launching with wine is an option when wine is installed.
 
 ## Instructions
   1. Drop your extracted game into this folder
