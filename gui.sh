@@ -28,7 +28,7 @@ GAMEFOLDER=$(find "$DATA_DIR" ! -path "*_i386*" ! -path "*_amd64/*" ! -path "*.a
 
 if [[ ! -d "$GAMEFOLDER" ]]; then
     messagebox "No game folder found inside \"$DATA_DIR\""
-    exit 404;
+    exit 31;
 fi
 
 ACTIVITY="Build Outputs"
@@ -48,10 +48,9 @@ if [[ " ${ANSWER[@]} " =~ "macdmg" ]] || [[ " ${ANSWER[@]} " =~ "maczip" ]]; the
 
     if [[ ! -f "$CURRENT_DIR/$MKXP_MAC" ]]; then
         messagebox "Please '$MKXP_MAC' download from 'https://app.box.com/v/mkxpmacbuilds' to \"$CURRENT_DIR\"."
-        exit
+        exit 32;
     fi
 fi
-exit
 
 ACTIVITY="Building ${#ANSWER[*]} items..."
 {

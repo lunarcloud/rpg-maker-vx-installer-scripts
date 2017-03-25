@@ -17,7 +17,7 @@ GAMEFOLDER=$(find "$DATA_DIR" ! -path "*_i386*" ! -path "*_amd64/*" ! -path "*.a
 
 if [[ ! -d "$GAMEFOLDER" ]]; then
     echo "No game folder found inside \"$DATA_DIR\""
-    exit 404;
+    exit 31;
 fi
 
 BUNDLE_NAME=$(grep 'Title' "$GAMEFOLDER"/Game.ini | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
@@ -27,7 +27,7 @@ MKXP_MAC="mkxp-16-8-2015-withrubyzlib.zip"
 
 if [[ ! -e $MKXP_MAC ]]; then
     echo "Please '$MKXP_MAC' download from 'https://app.box.com/v/mkxpmacbuilds'"
-    exit
+    exit 32;
 fi
 
 if [[ ! -d "mkxp_mac/mkxp.app" ]]; then
