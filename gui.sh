@@ -28,7 +28,7 @@ GAMEFOLDER=$(find "$DATA_DIR" ! -path "*_i386*" ! -path "*_amd64/*" ! -path "*.a
 
 if [[ ! -d "$GAMEFOLDER" ]]; then
     messagebox "No game folder found inside \"$DATA_DIR\""
-    exit 404;
+    exit 31;
 fi
 
 ACTIVITY="Build Outputs"
@@ -43,9 +43,17 @@ if [[ "${ANSWER[@]}" == "" ]]; then
   exit 0;
 fi
 
+if [[ " ${ANSWER[@]} " =~ "macdmg" ]] || [[ " ${ANSWER[@]} " =~ "maczip" ]]; then
+    MKXP_MAC="mkxp-16-8-2015-withrubyzlib.zip"
+
+    if [[ ! -f "$CURRENT_DIR/$MKXP_MAC" ]]; then
+        messagebox "Please '$MKXP_MAC' download from 'https://app.box.com/v/mkxpmacbuilds' to \"$CURRENT_DIR\"."
+        exit 32;
+    fi
+fi
+
 ACTIVITY="Building ${#ANSWER[*]} items..."
 {
-    echo "$DATA_DIR"
   progressbar_update 1
 
   if [[ " ${ANSWER[@]} " =~ "deb32" ]] && [[ " ${ANSWER[@]} " =~ "deb64" ]]; then
@@ -74,3 +82,5 @@ ACTIVITY="Building ${#ANSWER[*]} items..."
   sleep 1
 } | progressbar
 progressbar_finish
+
+messagebox "Finished building."

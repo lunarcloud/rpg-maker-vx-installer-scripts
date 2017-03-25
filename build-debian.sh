@@ -22,7 +22,7 @@ GAMEFOLDER=$(find "$DATA_DIR" ! -path "*_i386*" ! -path "*_amd64/*" ! -path "*.a
 
 if [[ ! -d "$GAMEFOLDER" ]]; then
     echo "No game folder found inside \"$DATA_DIR\""
-    exit 404;
+    exit 31;
 fi
 
 TITLE_UPPER=$(grep 'Title' "$GAMEFOLDER"/Game.ini | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
@@ -61,6 +61,7 @@ cp app.desktop app.desktop.temp
 `sed -i "s/Comment=\(.*\)/Comment=$( echo "$SHORT_DESCRIPTION" | sed -e 's/\./\\\./g')/" ./app.desktop.temp`
 `sed -i "s/Name=\(.*\)/Name=$TITLE_UPPER/"  ./app.desktop.temp`
 `sed -i "s/Exec=\(.*\)/Exec=\/opt\/"$PACKAGENAME"\/game.sh/"  ./app.desktop.temp`
+`sed -i "s/Path=\(.*\)/Path=\/opt\/"$PACKAGENAME"\//"  ./app.desktop.temp`
 `sed -i "s/Icon=\(.*\)/Icon=\/opt\/"$PACKAGENAME"\/game.png/"  ./app.desktop.temp`
 
 #Create 32bit first
@@ -78,15 +79,10 @@ cp ./control.temp       "$DEBIANNAME32"/DEBIAN/control
 cp -r "$GAMEFOLDER"/*   "$DEBIANNAME32"/opt/"$PACKAGENAME"/
 cp game.sh              "$DEBIANNAME32"/opt/"$PACKAGENAME"/
 cp mkxp.linux.conf      "$DEBIANNAME32"/opt/"$PACKAGENAME"/mkxp.conf
-cp -r mkxp-*/lib        "$DEBIANNAME32"/opt/"$PACKAGENAME"/
-cp mkxp-*/mkxp.x86      "$DEBIANNAME32"/opt/"$PACKAGENAME"/"$EXECUTABLENAME".x86
 
 #Copy script-dialog
 mkdir "$DEBIANNAME32"/opt/"$PACKAGENAME"/script-dialog
 cp ./script-dialog/script-ui.sh "$DEBIANNAME32"/opt/"$PACKAGENAME"/script-dialog/
-
-#fix architecture
-`sed -i "s/Architecture: \(.*\)/Architecture: i386/"  "$DEBIANNAME32"/DEBIAN/control`
 
 if [ -f $DATA_DIR/license.txt ]; then
     cp -r $DATA_DIR/license.txt "$DEBIANNAME32"/opt/"$PACKAGENAME"/LICENSE
@@ -100,9 +96,19 @@ cp $DATA_DIR/game.png "$DEBIANNAME32"/opt/"$PACKAGENAME"/
 cp ./app.desktop.temp "$DEBIANNAME32"/usr/share/applications/"$PACKAGENAME".desktop
 
 if [ "$ARCH" == "32" ] || [ "$ARCH" == "both" ]; then
+
+    # arch specific stuff
+    sed -i "s/Architecture: \(.*\)/Architecture: i386/"  "$DEBIANNAME32"/DEBIAN/control
+    cp -r mkxp-*/lib        "$DEBIANNAME32"/opt/"$PACKAGENAME"/
+    cp mkxp-*/mkxp.x86      "$DEBIANNAME32"/opt/"$PACKAGENAME"/"$EXECUTABLENAME".x86
+
     # Build the package
     echo "attempting to build $DEBIANNAME32.deb ..."
     dpkg-deb --build "$DEBIANNAME32" "$DEBIANNAME32".deb
+
+    # Remove arch specific files
+    rm "$DEBIANNAME32"/opt/"$PACKAGENAME"/"$EXECUTABLENAME".x86
+    rm -r "$DEBIANNAME32"/opt/"$PACKAGENAME"/lib
 fi
 
 #Create 64bit
@@ -110,10 +116,9 @@ fi
 mv "$DEBIANNAME32" "$DEBIANNAME64"
 
 if [ "$ARCH" == "64" ] || [ "$ARCH" == "both" ]; then
-    #switch mkxp versions
-    rm "$DEBIANNAME64"/opt/"$PACKAGENAME"/"$EXECUTABLENAME".x86
+
+    # arch specific stuff
     cp mkxp-*/mkxp.amd64      "$DEBIANNAME64"/opt/"$PACKAGENAME"/"$EXECUTABLENAME".amd64
-    rm -r "$DEBIANNAME64"/opt/"$PACKAGENAME"/lib
     cp -r mkxp-*/lib64        "$DEBIANNAME64"/opt/"$PACKAGENAME"/lib64
 
     #fix architecture
@@ -126,9 +131,9 @@ fi
 
 # Cleanup
 echo "Cleaning up..."
-rm -r "$DEBIANNAME64"
 rm control.temp
 rm app.desktop.temp
+rm -r "$DEBIANNAME64"
 
 exit 0;
 
