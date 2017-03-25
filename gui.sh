@@ -43,6 +43,16 @@ if [[ "${ANSWER[@]}" == "" ]]; then
   exit 0;
 fi
 
+if [[ " ${ANSWER[@]} " =~ "macdmg" ]] || [[ " ${ANSWER[@]} " =~ "maczip" ]]; then
+    MKXP_MAC="mkxp-16-8-2015-withrubyzlib.zip"
+
+    if [[ ! -f "$CURRENT_DIR/$MKXP_MAC" ]]; then
+        messagebox "Please '$MKXP_MAC' download from 'https://app.box.com/v/mkxpmacbuilds' to \"$CURRENT_DIR\"."
+        exit
+    fi
+fi
+exit
+
 ACTIVITY="Building ${#ANSWER[*]} items..."
 {
     echo "$DATA_DIR"

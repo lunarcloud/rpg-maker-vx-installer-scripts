@@ -66,7 +66,7 @@ if [ "$PACKAGING" == "dmg" ] || [ "$PACKAGING" == "both" ]; then
 
     # clean up
     rm dmg-contents/.VolumeIcon.icns
-    rm dmg-contents/License.txt
+    rm dmg-contents/license.txt
     rm -r dmg-contents/"$BUNDLE_NAME".app
 fi
 
