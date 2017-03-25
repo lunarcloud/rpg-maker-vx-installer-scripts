@@ -54,7 +54,6 @@ fi
 
 ACTIVITY="Building ${#ANSWER[*]} items..."
 {
-    echo "$DATA_DIR"
   progressbar_update 1
 
   if [[ " ${ANSWER[@]} " =~ "deb32" ]] && [[ " ${ANSWER[@]} " =~ "deb64" ]]; then
@@ -83,3 +82,5 @@ ACTIVITY="Building ${#ANSWER[*]} items..."
   sleep 1
 } | progressbar
 progressbar_finish
+
+messagebox "Finished building."
