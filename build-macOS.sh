@@ -36,7 +36,7 @@ fi
 
 rm -rf ./"$BUNDLE_NAME".app
 cp -r ./mkxp_mac/mkxp.app ./"$BUNDLE_NAME".app
-cp -r "$GAMEFOLDER"/* ./"$BUNDLE_NAME".app/Contents/MacOS/
+cp -r "$GAMEFOLDER"/* ./"$BUNDLE_NAME".app/Contents/Resources/
 
 if [[ -f "$DATA_DIR"/game.png ]]; then
     png2icns ./"$BUNDLE_NAME".app/Contents/Resources/app.icns "$DATA_DIR"/game.png
