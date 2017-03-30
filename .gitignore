@@ -20,3 +20,4 @@ license.txt
 *.zip
 dmg-contents/License.txt
 *.nsi
+*.dmg
