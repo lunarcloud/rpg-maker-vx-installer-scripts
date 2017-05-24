@@ -1,11 +1,15 @@
 #!/bin/bash
 CURRENT_DIR=$(dirname "$(readlink -f "$0")")/
-source "$CURRENT_DIR"/script-dialog/script-ui.sh #folder local version
+source "$CURRENT_DIR"/script-dialog/script-dialog.sh #folder local version
 
 relaunchIfNotVisible
 
 APP_NAME="Test Script"
-WINDOW_ICON="$CURRENT_DIR/game.png.example"
+if [[ -e "$CURRENT_DIR/game.png" ]]; then
+  WINDOW_ICON="$CURRENT_DIR/game.png"
+else
+  WINDOW_ICON="$CURRENT_DIR/game.png.example"
+fi
 
 
 if [[ $# -eq 0 ]] ; then
