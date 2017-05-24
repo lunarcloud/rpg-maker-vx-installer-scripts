@@ -4,7 +4,9 @@ On Linux and Mac, [mkxp](https://github.com/Ancurio/mkxp) is used to create nati
 
 ## Environment
 This was made to run on Linux.
+
 You will need [Cygwin](https://www.cygwin.com/) or [WSL](https://msdn.microsoft.com/commandline/wsl/about).
+
 It may not work on macOS. Patches to script-dialog and/or this to make it work would be welcome.
 
 ## Instructions
