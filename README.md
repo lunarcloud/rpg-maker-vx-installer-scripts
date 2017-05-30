@@ -3,7 +3,7 @@ Create installers for RPG Maker XP or VX (Ace) games for Windows, Mac, and Linux
 On Linux and Mac, [mkxp](https://github.com/Ancurio/mkxp) is used to create native applications. On Linux, launching with wine is an option when wine is installed.
 
 ## Environment
-Linux is the intended and reccomended OS to run this on.
+Linux is the intended and recommended OS to run this on.
 
 To run on Windows, you will need [Cygwin](https://www.cygwin.com/), [WSL](https://msdn.microsoft.com/commandline/wsl/about), or a virtual machine like [VirtualBox](https://www.virtualbox.org) running Linux.
 
