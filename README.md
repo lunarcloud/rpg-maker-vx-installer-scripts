@@ -2,12 +2,12 @@
 Create installers for RPG Maker XP or VX (Ace) games for Windows, Mac, and Linux (Debian / Ubuntu).
 On Linux and Mac, [mkxp](https://github.com/Ancurio/mkxp) is used to create native applications. On Linux, launching with wine is an option when wine is installed.
 
-## Environment
-Linux is the intended and recommended OS to run this on.
+## Prerequisites
+This was made to run on Linux.
+If you don't have Linux running yet, I suggest installing [VirtualBox](https://www.virtualbox.org) and installing the latest LTS version of [Ubuntu](https://www.ubuntu.com/download/desktop) on it.
 
-To run on Windows, you will need [Cygwin](https://www.cygwin.com/), [WSL](https://msdn.microsoft.com/commandline/wsl/about), or a virtual machine like [VirtualBox](https://www.virtualbox.org) running Linux.
-
-To run on macOS, you will need a virtual machine like [VirtualBox](https://www.virtualbox.org) running Linux.
+Then run the following which will install an icon converter tool for the macOS builder and the Windows installer creation tool NSIS:
+`sudo apt install icnsutils nsis`
 
 ## Instructions
   1. Create a folder for your installer project
