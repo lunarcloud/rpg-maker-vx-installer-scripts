@@ -6,7 +6,7 @@ On Linux and Mac, [mkxp](https://github.com/Ancurio/mkxp) is used to create nati
 This was made to run on Linux.
 If you don't have Linux running yet, I suggest installing [VirtualBox](https://www.virtualbox.org) and installing the latest LTS version of [Ubuntu](https://www.ubuntu.com/download/desktop) on it.
 
-Then run the following which will install an icon converter tool for the macOS builder and the Windows installer creation tool NSIS:
+Then run the following command in the terminal which will install an icon converter tool for the macOS builder and the Windows installer creation tool NSIS:
 `sudo apt install icnsutils nsis`
 
 ## Instructions
