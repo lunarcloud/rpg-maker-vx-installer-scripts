@@ -82,7 +82,7 @@ cp mkxp.linux.conf      "$DEBIANNAME32"/opt/"$PACKAGENAME"/mkxp.conf
 
 #Copy script-dialog
 mkdir "$DEBIANNAME32"/opt/"$PACKAGENAME"/script-dialog
-cp ./script-dialog/script-ui.sh "$DEBIANNAME32"/opt/"$PACKAGENAME"/script-dialog/
+cp ./script-dialog/script-dialog.sh "$DEBIANNAME32"/opt/"$PACKAGENAME"/script-dialog/
 
 if [ -f $DATA_DIR/license.txt ]; then
     cp -r $DATA_DIR/license.txt "$DEBIANNAME32"/opt/"$PACKAGENAME"/LICENSE

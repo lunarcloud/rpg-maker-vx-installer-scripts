@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 CURRENT_DIR=$(dirname "$(readlink -f "$0")")/
-source "$CURRENT_DIR"/script-dialog/script-ui.sh #folder local version
+source "$CURRENT_DIR"/script-dialog/script-dialog.sh #folder local version
 
 relaunchIfNotVisible
 
