@@ -1,4 +1,5 @@
 #!/bin/bash
+CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Get Variables
 
@@ -39,9 +40,27 @@ cp -r ./mkxp_mac/mkxp.app ./"$BUNDLE_NAME".app
 cp -r "$GAMEFOLDER"/* ./"$BUNDLE_NAME".app/Contents/Resources/
 
 if [[ -f "$DATA_DIR"/game.png ]]; then
+    cp "$DATA_DIR"/game.png ./"$BUNDLE_NAME".app/Contents/Resources/
     png2icns ./"$BUNDLE_NAME".app/Contents/Resources/app.icns "$DATA_DIR"/game.png
     # Modify "$BUNDLE_NAME".app/Contents/Info.plist to inclide the icon
 fi
+
+sed -i "s|^.*iconPath=.*|iconPath=game.png|" "./$BUNDLE_NAME.app/Contents/Resources/mkxp.conf"
+
+PLIST="./$BUNDLE_NAME.app/Contents/Info.plist"
+SAW_ICONLINE=false
+LINE_NUM=0
+while IFS= read -r line
+do
+	((LINE_NUM++))
+	if [[ $SAW_ICONLINE == true ]]; then
+		sed -i "${LINE_NUM}s|<string></string>|<string>game</string>|" "$PLIST"
+		break;
+	fi
+	if [[ "$line" =~ "CFBundleIconFile" ]]; then
+		SAW_ICONLINE=true
+	fi
+done < "$PLIST"
 
 if [ "$PACKAGING" == "zip" ] || [ "$PACKAGING" == "both" ]; then
     # create zip of the bundle
