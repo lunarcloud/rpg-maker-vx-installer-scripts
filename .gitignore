@@ -5,6 +5,8 @@ gameinfo.conf
 company.png
 game.png
 zoogame
+ZooGame
+wildaraz
 *.kate-swp
 *~
 *_i386/
@@ -21,4 +23,5 @@ license.txt
 dmg-contents/License.txt
 *.nsi
 *.dmg
-ZooGame
+*.log
+resource_hacker/
