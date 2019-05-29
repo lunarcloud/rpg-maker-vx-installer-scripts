@@ -42,7 +42,7 @@ cp -r "$GAMEFOLDER"/* ./"$BUNDLE_NAME".app/Contents/Resources/
 if [[ -f "$DATA_DIR"/game.png ]]; then
     cp "$DATA_DIR"/game.png ./"$BUNDLE_NAME".app/Contents/Resources/
     png2icns ./"$BUNDLE_NAME".app/Contents/Resources/app.icns "$DATA_DIR"/game.png
-    # Modify "$BUNDLE_NAME".app/Contents/Info.plist to inclide the icon
+    # Modify "$BUNDLE_NAME".app/Contents/Info.plist to include the icon
 fi
 
 sed -i "s|^.*iconPath=.*|iconPath=game.png|" "./$BUNDLE_NAME.app/Contents/Resources/mkxp.conf"
