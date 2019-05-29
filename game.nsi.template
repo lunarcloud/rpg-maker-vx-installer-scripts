@@ -55,7 +55,7 @@ Section "MainSection" SEC01
   File /r "${GAMEFOLDER}\System"
   File "${GAMEFOLDER}\Game.exe"
   File "${GAMEFOLDER}\Game.ini"
-  File "${GAMEFOLDER}\Game.rvproj2"
+  ;File "${GAMEFOLDER}\Game.rvproj2"
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME}"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME}.lnk" "$INSTDIR\Game.exe"
   CreateShortCut "$DESKTOP\${PRODUCT_NAME}.lnk" "$INSTDIR\Game.exe"
@@ -100,7 +100,7 @@ Section Uninstall
   RMDir /r "$INSTDIR\System"
   Delete "$INSTDIR\Game.exe"
   Delete "$INSTDIR\Game.ini"
-  Delete "$INSTDIR\Game.rvproj2"
+  ;Delete "$INSTDIR\Game.rvproj2"
 
   Delete "$DESKTOP\${PRODUCT_NAME}.lnk"
 

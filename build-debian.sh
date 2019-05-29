@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [[ ! -e mkxp-20150204.tar.xz ]]; then
+if [[ ! -e 	mkxp-20180121.tar.xz ]]; then
     #Get copy of MKXP
-    wget http://ancurio.bplaced.net/mkxp/generic/mkxp-20150204.tar.xz # or latest version
+    wget http://ancurio.bplaced.net/mkxp/generic/mkxp-20180121.tar.xz # or latest version
     tar xf mkxp*.tar.xz
 fi
 

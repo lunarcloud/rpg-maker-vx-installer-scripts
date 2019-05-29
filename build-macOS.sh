@@ -24,7 +24,7 @@ fi
 BUNDLE_NAME=$(grep 'Title' "$GAMEFOLDER"/Game.ini | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
 VERSION=$(grep 'Version' "$DATA_DIR"/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
 
-MKXP_MAC="mkxp-16-8-2015-withrubyzlib.zip"
+MKXP_MAC="mkxp-6-8-2018-withrubyzlib.zip"
 
 if [[ ! -e $MKXP_MAC ]]; then
     echo "Please '$MKXP_MAC' download from 'https://app.box.com/v/mkxpmacbuilds'"
