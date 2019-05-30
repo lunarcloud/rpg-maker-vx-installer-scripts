@@ -37,7 +37,7 @@ COMPANY_LOWER_DASH=$(echo $COMPANY_LOWER  | sed -e 's/ /-/g')
 
 VERSION=$(grep 'Version' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
 SHORT_DESCRIPTION=$(grep 'Description' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
-DESCRIPTION=$(sed -n '/Description/,$p' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2- | sed ':a;N;$!ba;s/\n/\\n\t/g')
+DESCRIPTION=$(sed -n '/Description/,$p' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2- | sed ':a;N;$!ba;s/\n/\\n/g;s/	/ /g')
 MAINTANER=$(grep 'Maintainer' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
 HOMEPAGE=$(grep 'Homepage' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
 
@@ -45,6 +45,7 @@ PACKAGENAME="$COMPANY_LOWER_DASH"-"$TITLE_LOWER_DASH"
 EXECUTABLENAME="$TITLE_LOWER_DASH"
 DEBIANNAME32="$PACKAGENAME"_"$VERSION"_i386
 DEBIANNAME64="$PACKAGENAME"_"$VERSION"_amd64
+
 
 # Create temp control file
 echo "Creating control file..."

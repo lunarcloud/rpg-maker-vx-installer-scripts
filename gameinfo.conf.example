@@ -3,5 +3,8 @@ Maintainer=John Doe <john.doe@company.com>
 Homepage=https:\/\/example.com
 Version=2015.08.25
 Description=An rpg maker game by john doe.
-    A grand sweeping adventure.
-    Very interesting stuff
+ A grand sweeping adventure.
+ .
+ Very interesting stuff.
+ .
+ Multiple Paragraph thrills!
