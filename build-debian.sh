@@ -1,4 +1,5 @@
 #!/bin/bash
+CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 if [[ ! -e 	mkxp-20180121.tar.xz ]]; then
     #Get copy of MKXP
