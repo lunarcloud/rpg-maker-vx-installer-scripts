@@ -82,9 +82,8 @@ ACTIVITY="Building ${#ANSWER[*]} items..."
     bash build-windows.sh "$DATA_DIR"
   fi
   progressbar_update 100
-
-  sleep 1
+  sleep 0.2
+  progressbar_finish
 } | progressbar
-progressbar_finish
 
 messagebox "Finished building."
