@@ -48,6 +48,8 @@ fi
 sed -i "s|^.*iconPath=.*|iconPath=game.png|" "./$BUNDLE_NAME.app/Contents/Resources/mkxp.conf"
 
 PLIST="./$BUNDLE_NAME.app/Contents/Info.plist"
+
+#Update Icon in PFList
 SAW_ICONLINE=false
 LINE_NUM=0
 while IFS= read -r line
@@ -59,6 +61,21 @@ do
 	fi
 	if [[ "$line" =~ "CFBundleIconFile" ]]; then
 		SAW_ICONLINE=true
+	fi
+done < "$PLIST"
+
+#Update Name in PFList
+SAW_NAMELINE=false
+LINE_NUM=0
+while IFS= read -r line
+do
+	((LINE_NUM++))
+	if [[ $SAW_NAMELINE == true ]]; then
+		sed -i "${LINE_NUM}s|<string></string>|<string>$BUNDLE_NAME</string>|" "$PLIST"
+		break;
+	fi
+	if [[ "$line" =~ "CFBundleName" ]]; then
+		SAW_NAMELINE=true
 	fi
 done < "$PLIST"
 
