@@ -35,7 +35,7 @@ if [[ -f "$DATA_DIR"/game.ico ]]; then
 
     cp "$DATA_DIR/game.ico" "$DATA_DIR/1.ico"
 
-    wine resource_hacker/ResourceHacker.exe -open "$EXECUTABLE" -save "$EXECUTABLE" -log ./resourcehacker.log -resource "$DATA_DIR/1.ico" -action addoverwrite -mask ICONGROUP,MAINICON,
+    wine resource_hacker/ResourceHacker.exe -open "$EXECUTABLE" -save "$EXECUTABLE" -log ./resourcehacker.log -resource "$DATA_DIR/1.ico" -action addoverwrite -mask ICONGROUP,1,
 
     rm "$DATA_DIR/1.ico"
 fi
