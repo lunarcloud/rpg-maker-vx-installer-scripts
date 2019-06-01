@@ -31,7 +31,7 @@ if [[ ! -e "$CURRENT_DIR/$MKXP_MAC" ]]; then
     exit 32;
 fi
 
-if [[ ! -d "mkxp_mac/mkxp.app" ]]; then
+if [[ ! -d "$CURRENT_DIR/mkxp_mac/mkxp.app" ]]; then
     unzip "$CURRENT_DIR/$MKXP_MAC" -d "$CURRENT_DIR/mkxp_mac"
 fi
 
