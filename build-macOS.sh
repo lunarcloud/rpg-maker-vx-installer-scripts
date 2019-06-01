@@ -102,7 +102,7 @@ if [ "$PACKAGING" == "dmg" ] || [ "$PACKAGING" == "both" ]; then
         cp "$DATA_DIR"/license.txt "$CURRENT_DIR/"dmg-contents/
     fi
 
-    genisoimage -V "$CURRENT_DIR/$BUNDLE_NAME" -D -R -apple -no-pad -o "$CURRENT_DIR/$BUNDLE_NAME $VERSION.dmg" "$CURRENT_DIR/"dmg-contents
+    genisoimage -V "$CURRENT_DIR/$BUNDLE_NAME" -D -R -apple -no-pad -o "$BUNDLE_NAME $VERSION.dmg" "$CURRENT_DIR/"dmg-contents
 
     # clean up
     rm "$CURRENT_DIR/"dmg-contents/.VolumeIcon.icns
