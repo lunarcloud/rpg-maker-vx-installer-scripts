@@ -37,6 +37,7 @@ else
 fi
 "$CURRENT_DIR/change-exe-icon.sh"
 
+cd "$CURRENT_DIR"
 makensis "$CURRENT_DIR/game.nsi"
 
 # clean up
