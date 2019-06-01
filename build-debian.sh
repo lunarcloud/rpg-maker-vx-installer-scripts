@@ -50,26 +50,26 @@ DEBIANNAME64="$PACKAGENAME"_"$VERSION"_amd64
 
 # Create game launcher script
 echo "Creating game launcher script..."
-cp game.sh game.sh.temp
-`sed -i "s|APPDIR=\(.*\)|APPDIR=$HOME/.local/share/$PACKAGENAME/|" ./game.sh.temp`
+cp "$CURRENT_DIR/"game.sh "$CURRENT_DIR/"game.sh.temp
+`sed -i "s|APPDIR=\(.*\)|APPDIR=$HOME/.local/share/$PACKAGENAME/|" "$CURRENT_DIR/"game.sh.temp`
 
 # Create temp control file
 echo "Creating control file..."
 cp control control.temp
-`sed -i "s/Version: \(.*\)/Version: $(echo "$VERSION" | sed -e 's/\./\\\./g')/"  ./control.temp`
-`sed -i "s/Description: \(.*\)/Description: $( echo "$DESCRIPTION" | sed -e 's/\./\\\./g')/"  ./control.temp`
-`sed -i "s/Maintainer: \(.*\)/Maintainer: $MAINTANER/"  ./control.temp`
-`sed -i "s/Homepage: \(.*\)/Homepage: $HOMEPAGE/"  ./control.temp`
-`sed -i "s/Package: \(.*\)/Package: $PACKAGENAME/"  ./control.temp`
+`sed -i "s/Version: \(.*\)/Version: $(echo "$VERSION" | sed -e 's/\./\\\./g')/"  "$CURRENT_DIR/"control.temp`
+`sed -i "s/Description: \(.*\)/Description: $( echo "$DESCRIPTION" | sed -e 's/\./\\\./g')/"  "$CURRENT_DIR/"control.temp`
+`sed -i "s/Maintainer: \(.*\)/Maintainer: $MAINTANER/"  "$CURRENT_DIR/"control.temp`
+`sed -i "s/Homepage: \(.*\)/Homepage: $HOMEPAGE/"  "$CURRENT_DIR/"control.temp`
+`sed -i "s/Package: \(.*\)/Package: $PACKAGENAME/"  "$CURRENT_DIR/"control.temp`
 
 # Create temp desktop file
 echo "Creating desktop file..."
 cp app.desktop app.desktop.temp
-`sed -i "s/Comment=\(.*\)/Comment=$( echo "$SHORT_DESCRIPTION" | sed -e 's/\./\\\./g')/" ./app.desktop.temp`
-`sed -i "s/Name=\(.*\)/Name=$TITLE_UPPER/"  ./app.desktop.temp`
-`sed -i "s/Exec=\(.*\)/Exec=\/opt\/"$PACKAGENAME"\/game.sh/"  ./app.desktop.temp`
-`sed -i "s/Path=\(.*\)/Path=\/opt\/"$PACKAGENAME"\//"  ./app.desktop.temp`
-`sed -i "s/Icon=\(.*\)/Icon=\/opt\/"$PACKAGENAME"\/game.png/"  ./app.desktop.temp`
+`sed -i "s/Comment=\(.*\)/Comment=$( echo "$SHORT_DESCRIPTION" | sed -e 's/\./\\\./g')/" "$CURRENT_DIR/"app.desktop.temp`
+`sed -i "s/Name=\(.*\)/Name=$TITLE_UPPER/"  "$CURRENT_DIR/"app.desktop.temp`
+`sed -i "s/Exec=\(.*\)/Exec=\/opt\/"$PACKAGENAME"\/game.sh/"  "$CURRENT_DIR/"app.desktop.temp`
+`sed -i "s/Path=\(.*\)/Path=\/opt\/"$PACKAGENAME"\//"  "$CURRENT_DIR/"app.desktop.temp`
+`sed -i "s/Icon=\(.*\)/Icon=\/opt\/"$PACKAGENAME"\/game.png/"  "$CURRENT_DIR/"app.desktop.temp`
 
 #Create 32bit first
 
@@ -82,14 +82,14 @@ mkdir -p "$DEBIANNAME32"/usr/share/pixmaps/
 
 # Copy file into them
 echo "Populating fakeroot..."
-cp ./control.temp       "$DEBIANNAME32"/DEBIAN/control
+cp "$CURRENT_DIR/"control.temp       "$DEBIANNAME32"/DEBIAN/control
 cp -r "$GAMEFOLDER"/*   "$DEBIANNAME32"/opt/"$PACKAGENAME"/
-cp game.sh.temp              "$DEBIANNAME32"/opt/"$PACKAGENAME"/game.sh
-cp mkxp.linux.conf      "$DEBIANNAME32"/opt/"$PACKAGENAME"/mkxp.conf
+cp "$CURRENT_DIR/"game.sh.temp              "$DEBIANNAME32"/opt/"$PACKAGENAME"/game.sh
+cp "$CURRENT_DIR/"mkxp.linux.conf      "$DEBIANNAME32"/opt/"$PACKAGENAME"/mkxp.conf
 
 #Copy script-dialog
 mkdir "$DEBIANNAME32"/opt/"$PACKAGENAME"/script-dialog
-cp ./script-dialog/script-dialog.sh "$DEBIANNAME32"/opt/"$PACKAGENAME"/script-dialog/
+cp "$CURRENT_DIR/"script-dialog/script-dialog.sh "$DEBIANNAME32"/opt/"$PACKAGENAME"/script-dialog/
 
 if [ -f $DATA_DIR/license.txt ]; then
     cp -r $DATA_DIR/license.txt "$DEBIANNAME32"/opt/"$PACKAGENAME"/LICENSE
@@ -100,7 +100,7 @@ if [ -f $DATA_DIR/company.png ]; then
 fi
 
 cp $DATA_DIR/game.png "$DEBIANNAME32"/opt/"$PACKAGENAME"/
-cp ./app.desktop.temp "$DEBIANNAME32"/usr/share/applications/"$PACKAGENAME".desktop
+cp "$CURRENT_DIR/"app.desktop.temp "$DEBIANNAME32"/usr/share/applications/"$PACKAGENAME".desktop
 
 if [ "$ARCH" == "32" ] || [ "$ARCH" == "both" ]; then
 

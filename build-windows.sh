@@ -24,20 +24,20 @@ WEB_SITE=$(grep 'Homepage' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n'
 # Update nsi file
 echo "Creating nsi file..."
 cp game.nsi.template game.nsi
-sed -i "s#define GAMEFOLDER \"\(.*\)\"#define GAMEFOLDER \"$(echo "$GAMEFOLDER" | sed -e 's/\./\\\./g')\"#"  "./game.nsi"
-sed -i "s/define PRODUCT_NAME \"\(.*\)\"/define PRODUCT_NAME \"$(echo "$NAME" | sed -e 's/\./\\\./g')\"/"  "./game.nsi"
-sed -i "s/define PRODUCT_VERSION \"\(.*\)\"/define PRODUCT_VERSION \"$(echo "$VERSION" | sed -e 's/\./\\\./g')\"/"  "./game.nsi"
-sed -i "s/define PRODUCT_PUBLISHER \"\(.*\)\"/define PRODUCT_PUBLISHER \"$(echo "$PUBLISHER" | sed -e 's/\./\\\./g')\"/"  "./game.nsi"
-sed -i "s/define PRODUCT_WEB_SITE \"\(.*\)\"/define PRODUCT_WEB_SITE \"$(echo "$WEB_SITE" | sed -e 's/\./\\\./g')\"/"  "./game.nsi"
+sed -i "s#define GAMEFOLDER \"\(.*\)\"#define GAMEFOLDER \"$(echo "$GAMEFOLDER" | sed -e 's/\./\\\./g')\"#"  "$CURRENT_DIR/game.nsi"
+sed -i "s/define PRODUCT_NAME \"\(.*\)\"/define PRODUCT_NAME \"$(echo "$NAME" | sed -e 's/\./\\\./g')\"/"  "$CURRENT_DIR/game.nsi"
+sed -i "s/define PRODUCT_VERSION \"\(.*\)\"/define PRODUCT_VERSION \"$(echo "$VERSION" | sed -e 's/\./\\\./g')\"/"  "$CURRENT_DIR/game.nsi"
+sed -i "s/define PRODUCT_PUBLISHER \"\(.*\)\"/define PRODUCT_PUBLISHER \"$(echo "$PUBLISHER" | sed -e 's/\./\\\./g')\"/"  "$CURRENT_DIR/game.nsi"
+sed -i "s/define PRODUCT_WEB_SITE \"\(.*\)\"/define PRODUCT_WEB_SITE \"$(echo "$WEB_SITE" | sed -e 's/\./\\\./g')\"/"  "$CURRENT_DIR/game.nsi"
 
 if [ -f "$DATA_DIR"/installer.ico ]; then
-    sed -i "s#define MUI_ICON \"\(.*\)\"#define MUI_ICON \"$DATA_DIR/installer.ico\"#"  "./game.nsi"
+    sed -i "s#define MUI_ICON \"\(.*\)\"#define MUI_ICON \"$DATA_DIR/installer.ico\"#"  "$CURRENT_DIR/game.nsi"
 else
-    sed -i "s#define MUI_ICON \"\(.*\)\"#define MUI_ICON \"\$\{NSISDIR\}\\\\Contrib\\\\Graphics\\\\Icons\\\\modern-install.ico\"#"  "./game.nsi"
+    sed -i "s#define MUI_ICON \"\(.*\)\"#define MUI_ICON \"\$\{NSISDIR\}\\\\Contrib\\\\Graphics\\\\Icons\\\\modern-install.ico\"#"  "$CURRENT_DIR/game.nsi"
 fi
-./change-exe-icon.sh
+"$CURRENT_DIR/change-exe-icon.sh"
 
-makensis game.nsi
+makensis "$CURRENT_DIR/game.nsi"
 
 # clean up
-rm game.nsi
+rm "$CURRENT_DIR/game.nsi"
