@@ -2,10 +2,11 @@
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "$CURRENT_DIR"/script-dialog/script-dialog.sh #folder local version
 
-if [[ ! -e 	mkxp-20180121.tar.xz ]]; then
+if [[ ! -e "$CURRENT_DIR"/mkxp-20180121.tar.xz ]]; then
+    cd "$CURRENT_DIR"
     #Get copy of MKXP
     wget http://ancurio.bplaced.net/mkxp/generic/mkxp-20180121.tar.xz # or latest version
-    tar xf mkxp*.tar.xz
+    tar xf "$CURRENT_DIR"/mkxp*.tar.xz
 fi
 
 APPIMAGETOOL="appimagetool-x86_64.AppImage"
@@ -83,7 +84,7 @@ function createAppImage() {
 
     # Creating desktop file...
     DESKTOP_FILE="$APPDIR/$PACKAGENAME.desktop"
-    cp "app.desktop" "$DESKTOP_FILE"
+    cp "$CURRENT_DIR/app.desktop" "$DESKTOP_FILE"
     `sed -i "s|Name=\(.*\)|Name=$TITLE_UPPER|" "$DESKTOP_FILE"`
     `sed -i "s|Comment=\(.*\)|Comment=$( echo "$SHORT_DESCRIPTION" | sed -e 's/\./\\\./g')|" "$DESKTOP_FILE"`
     `sed -i "s/Exec=\(.*\)/Exec=\"\/opt\/"$PACKAGENAME"\/game.sh\"/" "$DESKTOP_FILE"`
