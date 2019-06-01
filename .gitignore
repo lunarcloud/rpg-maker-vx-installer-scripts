@@ -26,7 +26,6 @@ dmg-contents/License.txt
 *.log
 resource_hacker/
 game.sh.temp
-linux-appimage/
 tool/
 *.AppImage
 *.AppDir
