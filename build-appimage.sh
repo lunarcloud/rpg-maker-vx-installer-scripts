@@ -2,10 +2,10 @@
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "$CURRENT_DIR"/script-dialog/script-dialog.sh #folder local version
 
-if [[ ! -e "$CURRENT_DIR"/mkxp-20180121.tar.xz ]]; then
-    cd "$CURRENT_DIR"
-    #Get copy of MKXP
-    wget http://ancurio.bplaced.net/mkxp/generic/mkxp-20180121.tar.xz # or latest version
+if [[ ! -e "$CURRENT_DIR"/mkxp-20180121 ]]; then
+	if [[ ! -e "$CURRENT_DIR"/mkxp-20180121.tar.xz ]]; then
+		wget http://ancurio.bplaced.net/mkxp/generic/mkxp-20180121.tar.xz -P "$CURRENT_DIR"/
+	fi
     tar xf "$CURRENT_DIR"/mkxp*.tar.xz
 fi
 

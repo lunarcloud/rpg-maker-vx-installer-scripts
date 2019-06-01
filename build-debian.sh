@@ -1,10 +1,10 @@
 #!/bin/bash
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-if [[ ! -e "$CURRENT_DIR"/mkxp-20180121.tar.xz ]]; then
-    cd "$CURRENT_DIR"
-    #Get copy of MKXP
-    wget http://ancurio.bplaced.net/mkxp/generic/mkxp-20180121.tar.xz # or latest version
+if [[ ! -e "$CURRENT_DIR"/mkxp-20180121 ]]; then
+	if [[ ! -e "$CURRENT_DIR"/mkxp-20180121.tar.xz ]]; then
+		wget http://ancurio.bplaced.net/mkxp/generic/mkxp-20180121.tar.xz -P "$CURRENT_DIR"/
+	fi
     tar xf "$CURRENT_DIR"/mkxp*.tar.xz
 fi
 
@@ -55,7 +55,7 @@ cp "$CURRENT_DIR/"game.sh "$CURRENT_DIR/"game.sh.temp
 
 # Create temp control file
 echo "Creating control file..."
-cp control control.temp
+cp "$CURRENT_DIR/"control "$CURRENT_DIR/"control.temp
 `sed -i "s/Version: \(.*\)/Version: $(echo "$VERSION" | sed -e 's/\./\\\./g')/"  "$CURRENT_DIR/"control.temp`
 `sed -i "s/Description: \(.*\)/Description: $( echo "$DESCRIPTION" | sed -e 's/\./\\\./g')/"  "$CURRENT_DIR/"control.temp`
 `sed -i "s/Maintainer: \(.*\)/Maintainer: $MAINTANER/"  "$CURRENT_DIR/"control.temp`
@@ -64,12 +64,18 @@ cp control control.temp
 
 # Create temp desktop file
 echo "Creating desktop file..."
-cp app.desktop app.desktop.temp
+cp "$CURRENT_DIR/"app.desktop "$CURRENT_DIR/"app.desktop.temp
 `sed -i "s/Comment=\(.*\)/Comment=$( echo "$SHORT_DESCRIPTION" | sed -e 's/\./\\\./g')/" "$CURRENT_DIR/"app.desktop.temp`
 `sed -i "s/Name=\(.*\)/Name=$TITLE_UPPER/"  "$CURRENT_DIR/"app.desktop.temp`
 `sed -i "s/Exec=\(.*\)/Exec=\/opt\/"$PACKAGENAME"\/game.sh/"  "$CURRENT_DIR/"app.desktop.temp`
 `sed -i "s/Path=\(.*\)/Path=\/opt\/"$PACKAGENAME"\//"  "$CURRENT_DIR/"app.desktop.temp`
 `sed -i "s/Icon=\(.*\)/Icon=\/opt\/"$PACKAGENAME"\/game.png/"  "$CURRENT_DIR/"app.desktop.temp`
+
+# Remove old builds of same version
+rm -r "$DEBIANNAME32"
+rm -r "$DEBIANNAME32".deb
+rm -r "$DEBIANNAME64"
+rm -r "$DEBIANNAME64".deb
 
 #Create 32bit first
 
