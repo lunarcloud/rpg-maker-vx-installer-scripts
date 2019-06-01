@@ -37,7 +37,7 @@ fi
 
 rm -rf "$CURRENT_DIR/$BUNDLE_NAME".app
 cp -r "$CURRENT_DIR/mkxp_mac/mkxp.app" "$CURRENT_DIR/$BUNDLE_NAME".app
-if [[ ! -d "$CURRENT_DIR/$BUNDLE_NAME".app ]]
+if [[ ! -d "$CURRENT_DIR/$BUNDLE_NAME".app ]]; then
 	echo "can't build mac bundle."
 	exit 33
 fi
