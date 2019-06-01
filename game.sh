@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 CURRENT_DIR=$(dirname "$(readlink -f "$0")")/
+GUI=true
 source "$CURRENT_DIR"/script-dialog/script-dialog.sh #folder local version
 
 relaunchIfNotVisible
@@ -8,7 +9,10 @@ APP_NAME="Game Launcher"
 WINDOW_ICON="$CURRENT_DIR/game.png"
 
 LICENSE="$CURRENT_DIR"LICENSE
-LICENSE_ACCEPTED="$LICENSE"-accepted
+APPDIR="$HOME"/.local/share/aoeu
+LICENSE_ACCEPTED="$APPDIR"/LICENSE-accepted
+
+mkdir -p "$APPDIR"
 
 if [[ ! -f $LICENSE_ACCEPTED &&  -f $LICENSE ]]; then
     ACTIVITY="License"
@@ -17,10 +21,10 @@ if [[ ! -f $LICENSE_ACCEPTED &&  -f $LICENSE ]]; then
     yesno "Do you agree to and accept the license?";
 
     ANSWER=$?
-    ACTIVITY="Declined"
     if [ $ANSWER -eq 0 ]; then
         touch "$LICENSE_ACCEPTED"
     else
+		ACTIVITY="Declined"
         messagebox "Please uninstall this software or re-launch and accept the terms."
         exit 1;
     fi
@@ -46,26 +50,11 @@ if [[ ! -x $LAUNCH ]]; then
     exit 3;
 fi
 
-
 #detect wine
-if command -v wine 2>/dev/null; then # have wine
-    if [ $MKXP_SUPPORT == true ] ; then # also have mkxp executable
-        ACTIVITY="Runtime Type"
-        ANSWER=$(radiolist "How would you like to run the application? " 2  \
-                "mkxp" "Linux Engine (MKXP)" ON\
-                "wine" "Windows Engine (via Wine)" OFF )
-        if [ ${ANSWER} == 'wine' ]; then # chose wine
-            wine "$CURRENT_DIR"Game.exe
-        elif [ ${ANSWER} == 'mkxp' ]; then # chose mkxp
-            $LAUNCH
-        else # chose neither
-            exit 0
-        fi
-    else # don't have mkxp executable
-        wine "$CURRENT_DIR"Game.exe
-    fi
-elif [ $MKXP_SUPPORT == true ] ; then # no wine, only mkxp
-    $LAUNCH
+if [ $MKXP_SUPPORT == true ] ; then # no wine, only mkxp
+	LD_LIBRARY_PATH="$CURRENT_DIR/lib" $LAUNCH
+elif command -v wine 2>/dev/null; then # have wine
+	wine "$CURRENT_DIR"Game.exe
 else # neither wine nor mkxp
     ACTIVITY="Unable to launch"
     messagebox "Unable to launch on machine type $MACHINE_TYPE without wine installed";

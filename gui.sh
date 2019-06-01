@@ -36,12 +36,13 @@ if [[ ! -d "$GAMEFOLDER" ]]; then
 fi
 
 ACTIVITY="Build Outputs"
-ANSWER=($(checklist "What outputs do you want to build? " 5  \
-                "deb32" "Linux: 32-bit Debian Package" ON\
-                "deb64" "Linux: 64-bit Debian Package" ON\
+ANSWER=($(checklist "What outputs do you want to build? " 6  \
                 "win" "Windows: NSIS Installer" ON\
                 "macdmg" "macOS: DMG with App Bundle and more inside" ON\
-                "maczip" "macOS: Zipped App Bundle" OFF ))
+                "lin32" "Linux: 32-bit AppImage" OFF\
+                "lin64" "Linux: 64-bit AppImage" ON\
+                "deb32" "Linux: 32-bit Debian Package" OFF\
+                "deb64" "Linux: 64-bit Debian Package" OFF))
 
 if [[ "${ANSWER[@]}" == "" ]]; then
   exit 0;
@@ -60,6 +61,15 @@ ACTIVITY="Building ${#ANSWER[*]} items..."
 {
   progressbar_update 1
 
+  if [[ " ${ANSWER[@]} " =~ "lin32" ]] && [[ " ${ANSWER[@]} " =~ "lin64" ]]; then
+    bash build-appimage.sh "$DATA_DIR" "both"
+  elif [[ " ${ANSWER[@]} " =~ "lin32" ]]; then
+    bash build-appimage.sh "$DATA_DIR" "32"
+  elif [[ " ${ANSWER[@]} " =~ "lin64" ]]; then
+    bash build-appimage.sh "$DATA_DIR" "64"
+  fi
+  progressbar_update 30
+
   if [[ " ${ANSWER[@]} " =~ "deb32" ]] && [[ " ${ANSWER[@]} " =~ "deb64" ]]; then
     bash build-debian.sh "$DATA_DIR" "both"
   elif [[ " ${ANSWER[@]} " =~ "deb32" ]]; then
@@ -67,16 +77,12 @@ ACTIVITY="Building ${#ANSWER[*]} items..."
   elif [[ " ${ANSWER[@]} " =~ "deb64" ]]; then
     bash build-debian.sh "$DATA_DIR" "64"
   fi
-  progressbar_update 40
+  progressbar_update 60
 
-  if [[ " ${ANSWER[@]} " =~ "macdmg" ]] && [[ " ${ANSWER[@]} " =~ "maczip" ]]; then
-    bash build-macOS.sh "$DATA_DIR" "both"
-  elif [[ " ${ANSWER[@]} " =~ "macdmg" ]]; then
+  if [[ " ${ANSWER[@]} " =~ "macdmg" ]]; then
     bash build-macOS.sh "$DATA_DIR" "dmg"
-  elif [[ " ${ANSWER[@]} " =~ "maczip" ]]; then
-    bash build-macOS.sh "$DATA_DIR" "zip"
   fi
-  progressbar_update 80
+  progressbar_update 75
 
   if [[ " ${ANSWER[@]} " =~ "win" ]]; then
     bash build-windows.sh "$DATA_DIR"

@@ -25,3 +25,7 @@ dmg-contents/License.txt
 *.dmg
 *.log
 resource_hacker/
+game.sh.temp
+linux-appimage/
+tool/
+

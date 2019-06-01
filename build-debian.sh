@@ -47,6 +47,10 @@ EXECUTABLENAME="$TITLE_LOWER_DASH"
 DEBIANNAME32="$PACKAGENAME"_"$VERSION"_i386
 DEBIANNAME64="$PACKAGENAME"_"$VERSION"_amd64
 
+# Create game launcher script
+echo "Creating game launcher script..."
+cp game.sh game.sh.temp
+`sed -i "s|APPDIR=\(.*\)|APPDIR=$HOME/.local/share/$PACKAGENAME/|" ./game.sh.temp`
 
 # Create temp control file
 echo "Creating control file..."
@@ -79,7 +83,7 @@ mkdir -p "$DEBIANNAME32"/usr/share/pixmaps/
 echo "Populating fakeroot..."
 cp ./control.temp       "$DEBIANNAME32"/DEBIAN/control
 cp -r "$GAMEFOLDER"/*   "$DEBIANNAME32"/opt/"$PACKAGENAME"/
-cp game.sh              "$DEBIANNAME32"/opt/"$PACKAGENAME"/
+cp game.sh.temp              "$DEBIANNAME32"/opt/"$PACKAGENAME"/game.sh
 cp mkxp.linux.conf      "$DEBIANNAME32"/opt/"$PACKAGENAME"/mkxp.conf
 
 #Copy script-dialog
