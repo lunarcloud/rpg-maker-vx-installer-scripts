@@ -36,7 +36,11 @@ if [[ ! -d "mkxp_mac/mkxp.app" ]]; then
 fi
 
 rm -rf "$CURRENT_DIR/$BUNDLE_NAME".app
-cp -r "$CURRENT_DIR/"mkxp_mac/mkxp.app "$CURRENT_DIR/$BUNDLE_NAME".app
+cp -r "$CURRENT_DIR/mkxp_mac/mkxp.app" "$CURRENT_DIR/$BUNDLE_NAME".app
+if [[ ! -d "$CURRENT_DIR/$BUNDLE_NAME".app ]]
+	echo "can't build mac bundle."
+	exit 33
+fi
 cp -r "$GAMEFOLDER"/* "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/Resources/
 
 if [[ -f "$DATA_DIR"/game.png ]]; then
