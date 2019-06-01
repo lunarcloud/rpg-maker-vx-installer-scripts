@@ -63,8 +63,8 @@ RELATIVEDIR="/opt/$PACKAGENAME"
 
 # Create game launcher script
 echo "Creating game launcher script..."
-cp game.sh game.sh.temp
-`sed -i "s|APPDIR=\(.*\)|APPDIR=$HOME/.local/share/$PACKAGENAME/|" ./game.sh.temp`
+cp "$CURRENT_DIR/"game.sh "$CURRENT_DIR/"game.sh.temp
+`sed -i "s|APPDIR=\(.*\)|APPDIR=$HOME/.local/share/$PACKAGENAME/|" "$CURRENT_DIR/"game.sh.temp`
 
 function createAppImage() {
     ARCH=$1
@@ -77,7 +77,7 @@ function createAppImage() {
     rm -r "$APPDIR/$RELATIVEDIR"
     mkdir -p "$APPDIR/$RELATIVEDIR"
 
-    cp "linux-appimage/AppRun" "$APPDIR/"
+    cp "$CURRENT_DIR/linux-appimage/AppRun" "$APPDIR/"
     `sed -i "s|GAME_DIR=\(.*\)|GAME_DIR=\"$RELATIVEDIR\"|" "$APPDIR/AppRun"`
     `sed -i "s|GAME_EXEC=\(.*\)|GAME_EXEC=\"game.sh\"|" "$APPDIR/AppRun"`
 
