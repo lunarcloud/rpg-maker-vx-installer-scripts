@@ -1,4 +1,5 @@
  #!/bin/bash
+CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 if [[ $# -eq 0 ]] ; then
     DATA_DIR="."
@@ -17,13 +18,12 @@ if [[ -f "$DATA_DIR"/game.ico ]]; then
     fi
 
     # Ensure the tool exists
-    if [[ ! -e resource_hacker ]]; then
-        if [[ ! -e resource_hacker.zip ]]; then
-            #Get copy of Resource Hacker
-            wget http://www.angusj.com/resourcehacker/resource_hacker.zip # or latest version
+    if [[ ! -e "$CURRENT_DIR"/resource_hacker ]]; then
+        if [[ ! -e "$CURRENT_DIR"/resource_hacker.zip ]]; then
+            wget http://www.angusj.com/resourcehacker/resource_hacker.zip  -P "$CURRENT_DIR"/
         fi
-        unzip resource_hacker.zip -d resource_hacker
-        if [[ ! -e resource_hacker ]]; then
+        unzip "$CURRENT_DIR"/resource_hacker.zip -d "$CURRENT_DIR"/resource_hacker
+        if [[ ! -e "$CURRENT_DIR"/resource_hacker ]]; then
             echo "resource hacker tool does not exist"
             exit 32;
         fi
@@ -35,7 +35,7 @@ if [[ -f "$DATA_DIR"/game.ico ]]; then
 
     cp "$DATA_DIR/game.ico" "$DATA_DIR/1.ico"
 
-    wine resource_hacker/ResourceHacker.exe -open "$EXECUTABLE" -save "$EXECUTABLE" -log ./resourcehacker.log -resource "$DATA_DIR/1.ico" -action addoverwrite -mask ICONGROUP,1,
+    wine resource_hacker/ResourceHacker.exe -open "$EXECUTABLE" -save "$EXECUTABLE" -log "$CURRENT_DIR"/resourcehacker.log -resource "$DATA_DIR/1.ico" -action addoverwrite -mask ICONGROUP,1,
 
     rm "$DATA_DIR/1.ico"
 fi

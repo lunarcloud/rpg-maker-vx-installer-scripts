@@ -10,7 +10,7 @@ This was made to run on Linux.
 If you don't have Linux running yet, I suggest installing [VirtualBox](https://www.virtualbox.org) and installing the latest LTS version of [Ubuntu](https://www.ubuntu.com/download/desktop) on it.
 
 Ubuntu / Debian users can use this to set up:
-`sudo apt install curl icnsutils nsis`
+`sudo apt install curl icnsutils nsis wine`
 
 ## Instructions
   1. Create a folder for your installer project
