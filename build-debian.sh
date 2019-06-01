@@ -20,7 +20,7 @@ if [ "$ARCH" != "32" ] && [ "$ARCH" != "64" ] && [ "$ARCH" != "both" ]; then
 fi
 
 # Get Variables
-GAMEFOLDER=$(find "$DATA_DIR" ! -path "*_i386*" ! -path "*_amd64/*" ! -path "*.app*" -name 'Game.exe' -printf '%h\n' | sort -ur | tr -d '\n' | tr -d '\r')
+GAMEFOLDER=$(find "$DATA_DIR" ! -path "*_i386*" ! -path "*_amd64/*" ! -path "*.app*" ! -path "*.App*" -name 'Game.exe' -printf '%h\n' | sort -ur | tr -d '\n' | tr -d '\r')
 
 if [[ ! -d "$GAMEFOLDER" ]]; then
     echo "No game folder found inside \"$DATA_DIR\""
@@ -144,8 +144,8 @@ fi
 
 # Cleanup
 echo "Cleaning up..."
-rm control.temp
-rm app.desktop.temp
+rm "$CURRENT_DIR/"control.temp
+rm "$CURRENT_DIR/"app.desktop.temp
 rm -r "$DEBIANNAME64"
 
 exit 0;

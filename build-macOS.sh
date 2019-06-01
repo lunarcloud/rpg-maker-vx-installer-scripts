@@ -26,28 +26,28 @@ VERSION=$(grep 'Version' "$DATA_DIR"/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n'
 
 MKXP_MAC="mkxp-6-8-2018-withrubyzlib.zip"
 
-if [[ ! -e $MKXP_MAC ]]; then
-    echo "Please '$MKXP_MAC' download from 'https://app.box.com/v/mkxpmacbuilds'"
+if [[ ! -e "$CURRENT_DIR/$MKXP_MAC" ]]; then
+    echo "Please download '$MKXP_MAC' from 'https://app.box.com/v/mkxpmacbuilds' and place into $CURRENT_DIR"
     exit 32;
 fi
 
 if [[ ! -d "mkxp_mac/mkxp.app" ]]; then
-    unzip "$MKXP_MAC" -d "mkxp_mac"
+    unzip "$CURRENT_DIR/$MKXP_MAC" -d "$CURRENT_DIR/mkxp_mac"
 fi
 
-rm -rf "$CURRENT_DIR/""$BUNDLE_NAME".app
-cp -r "$CURRENT_DIR/"mkxp_mac/mkxp.app "$CURRENT_DIR/""$BUNDLE_NAME".app
-cp -r "$GAMEFOLDER"/* "$CURRENT_DIR/""$BUNDLE_NAME".app/Contents/Resources/
+rm -rf "$CURRENT_DIR/$BUNDLE_NAME".app
+cp -r "$CURRENT_DIR/"mkxp_mac/mkxp.app "$CURRENT_DIR/$BUNDLE_NAME".app
+cp -r "$GAMEFOLDER"/* "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/Resources/
 
 if [[ -f "$DATA_DIR"/game.png ]]; then
-    cp "$DATA_DIR"/game.png "$CURRENT_DIR/""$BUNDLE_NAME".app/Contents/Resources/
-    png2icns "$CURRENT_DIR/""$BUNDLE_NAME".app/Contents/Resources/game.icns "$DATA_DIR"/game.png
+    cp "$DATA_DIR"/game.png "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/Resources/
+    png2icns "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/Resources/game.icns "$DATA_DIR"/game.png
     # Modify "$BUNDLE_NAME".app/Contents/Info.plist to include the icon
 fi
 
-sed -i "s|^.*iconPath=.*|iconPath=game.png|" ""$CURRENT_DIR/"$BUNDLE_NAME.app/Contents/Resources/mkxp.conf"
+sed -i "s|^.*iconPath=.*|iconPath=game.png|" "$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Resources/mkxp.conf"
 
-PLIST=""$CURRENT_DIR/"$BUNDLE_NAME.app/Contents/Info.plist"
+PLIST="$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Info.plist"
 
 #Update Icon in PFList
 SAW_ICONLINE=false
@@ -83,9 +83,9 @@ if [ "$PACKAGING" == "zip" ] || [ "$PACKAGING" == "both" ]; then
     # create zip of the bundle
     ZIP_NAME="$BUNDLE_NAME $VERSION macOS.zip"
 
-    zip -r "$CURRENT_DIR/""$ZIP_NAME" "$CURRENT_DIR/""$BUNDLE_NAME".app
+    zip -r "$CURRENT_DIR/$ZIP_NAME" "$CURRENT_DIR/$BUNDLE_NAME".app
     if [ -f $DATA_DIR/license.txt ]; then
-        zip -uj "$CURRENT_DIR/""$ZIP_NAME" "$DATA_DIR"/license.txt
+        zip -uj "$CURRENT_DIR/$ZIP_NAME" "$DATA_DIR"/license.txt
     fi
 fi
 
