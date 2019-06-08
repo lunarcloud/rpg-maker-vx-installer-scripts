@@ -1,8 +1,11 @@
 # RPG Maker XP / VX / VX Ace Installer Creation Scripts
 Create installers for RPG Maker XP or VX (Ace) games for Windows, Mac, and Linux (Debian / Ubuntu).
-On Linux and Mac, [mkxp](https://github.com/Ancurio/mkxp) is used to create native applications. On Linux, launching with wine is an option when wine is installed.
 
-# Downloading
+## Engine
+On Linux and Mac, [mkxp](https://github.com/Ancurio/mkxp) is used as the native game executable.
+Please refer to their documentation for compatibility issues with running your game. For example, they cannot support games that use third-party dlls for obvious reasons.
+
+## Downloading
 Please use git clone --recurse-submodules https://github.com/lunarcloud/rpg-maker-vx-installer-scripts.git
 
 ## Prerequisites
