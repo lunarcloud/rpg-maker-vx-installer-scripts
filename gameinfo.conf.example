@@ -1,7 +1,8 @@
+Id=com.mycompany.MyGame
 Company=John Doe Corp
+Version=2015.08.25
 Maintainer=John Doe <john.doe@company.com>
 Homepage=https:\/\/example.com
-Version=2015.08.25
 Description=An rpg maker game by john doe.
  A grand sweeping adventure.
  .
