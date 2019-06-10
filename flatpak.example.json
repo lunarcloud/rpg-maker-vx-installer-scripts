@@ -1,0 +1,22 @@
+{
+    "app-id": "com.mycompany.MyGame",
+    "runtime": "org.freedesktop.Platform",
+    "runtime-version": "18.08",
+    "sdk": "org.freedesktop.Sdk",
+    "command": "game.sh",
+    "modules": [
+        {
+            "name": "MyGame",
+            "buildsystem": "simple",
+            "build-commands": [
+                "install -D game.sh /app/bin/game.sh"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "path": "game.sh"
+                }
+            ]
+        }
+    ]
+}
