@@ -53,6 +53,7 @@ COMPANY_LOWER=$(echo $COMPANY_UPPER  | tr '[:upper:]' '[:lower:]')
 COMPANY_LOWER_UNDERSCORE=$(echo $COMPANY_LOWER  | sed -e 's/ /_/g')
 COMPANY_LOWER_DASH=$(echo $COMPANY_LOWER  | sed -e 's/ /-/g')
 
+ID=$(grep 'Id' ../gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r' | tr -d '[:space:]')
 VERSION=$(grep 'Version' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
 SHORT_DESCRIPTION=$(grep 'Description' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
 DESCRIPTION=$(sed -n '/Description/,$p' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2- | sed ':a;N;$!ba;s/\n/\\n/g;s/	/ /g')
@@ -83,7 +84,7 @@ function createAppImage() {
     `sed -i "s|GAME_EXEC=\(.*\)|GAME_EXEC=\"game.sh\"|" "$APPDIR/AppRun"`
 
     # Creating desktop file...
-    DESKTOP_FILE="$APPDIR/$PACKAGENAME.desktop"
+    DESKTOP_FILE="$APPDIR/$ID.desktop"
     cp "$CURRENT_DIR/app.desktop" "$DESKTOP_FILE"
     `sed -i "s|Name=\(.*\)|Name=$TITLE_UPPER|" "$DESKTOP_FILE"`
     `sed -i "s|Comment=\(.*\)|Comment=$( echo "$SHORT_DESCRIPTION" | sed -e 's/\./\\\./g')|" "$DESKTOP_FILE"`
