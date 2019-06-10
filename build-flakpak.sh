@@ -51,6 +51,6 @@ EXECUTABLENAME="$TITLE_LOWER_DASH"
 
 echo "TODO"
 exit 9001
-flatpak-builder --bundle-sources --force-clean --repo=repo app $ID.json #--filesystem=~/.$ID
-flatpak build-bundle repo $ID.flatpak $ID
-rm -r repo app
+flatpak-builder --bundle-sources --force-clean --repo=flatpak app $ID.json #--filesystem=~/.$ID
+flatpak build-bundle flatpak $ID.flatpak $ID
+rm -r flatpak
