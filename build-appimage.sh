@@ -89,7 +89,7 @@ function createAppImage() {
     `sed -i "s|Name=\(.*\)|Name=$TITLE_UPPER|" "$DESKTOP_FILE"`
     `sed -i "s|Comment=\(.*\)|Comment=$( echo "$SHORT_DESCRIPTION" | sed -e 's/\./\\\./g')|" "$DESKTOP_FILE"`
     `sed -i "s/Exec=\(.*\)/Exec=\"\/opt\/"$PACKAGENAME"\/game.sh\"/" "$DESKTOP_FILE"`
-    `sed -i "s|Icon=\(.*\)|Icon=$PACKAGENAME|"  "$DESKTOP_FILE"`
+    `sed -i "s|Icon=\(.*\)|Icon=$(echo "$ID" | sed -e 's/\./\\\./g')|"  "$DESKTOP_FILE"`
     `sed -i "s|Path=\(.*\)|Path=\/opt\/"$PACKAGENAME"\/|"  "$DESKTOP_FILE"`
 
     # Populating fakeroot...
@@ -118,16 +118,16 @@ function createAppImage() {
     fi
 
     # native size
-    cp "$DATA_DIR"/game.png "$APPDIR/$PACKAGENAME.png"
+    cp "$DATA_DIR"/game.png "$APPDIR/$ID.png"
     mkdir -p "$APPDIR/usr/share/pixmaps"
-    cp "$DATA_DIR"/game.png "$APPDIR/usr/share/pixmaps/$PACKAGENAME.png"
+    cp "$DATA_DIR"/game.png "$APPDIR/usr/share/pixmaps/$ID.png"
 
     # hicolor sizes
     SIZES=( "128" "256" "512")
     for SIZE in "${SIZES[@]}"; do
         ICONDIR="$APPDIR/usr/share/icons/hicolor/${SIZE}x${SIZE}/apps/"
         mkdir -p "$ICONDIR"
-        convert "$DATA_DIR"/game.png -resize ${SIZE}x${SIZE} "$ICONDIR/$PACKAGENAME.png"
+        convert "$DATA_DIR"/game.png -resize ${SIZE}x${SIZE} "$ICONDIR/$ID.png"
     done
 
     rm $APPIMAGE # delete previous

@@ -70,7 +70,7 @@ cp "$CURRENT_DIR/"app.desktop "$CURRENT_DIR/"app.desktop.temp
 `sed -i "s/Name=\(.*\)/Name=$TITLE_UPPER/"  "$CURRENT_DIR/"app.desktop.temp`
 `sed -i "s/Exec=\(.*\)/Exec=\/opt\/"$PACKAGENAME"\/game.sh/"  "$CURRENT_DIR/"app.desktop.temp`
 `sed -i "s/Path=\(.*\)/Path=\/opt\/"$PACKAGENAME"\//"  "$CURRENT_DIR/"app.desktop.temp`
-`sed -i "s/Icon=\(.*\)/Icon=\/opt\/"$PACKAGENAME"\/game.png/"  "$CURRENT_DIR/"app.desktop.temp`
+`sed -i "s/Icon=\(.*\)/Icon=\/opt\/"$PACKAGENAME"\/$(echo "$ID" | sed -e 's/\./\\\./g').png/"  "$CURRENT_DIR/"app.desktop.temp`
 
 # Remove old builds of same version
 rm -r "$DEBIANNAME32"
@@ -106,7 +106,7 @@ if [ -f $DATA_DIR/company.png ]; then
     cp $DATA_DIR/company.png "$DEBIANNAME32"/opt/"$PACKAGENAME"/
 fi
 
-cp $DATA_DIR/game.png "$DEBIANNAME32"/opt/"$PACKAGENAME"/
+cp $DATA_DIR/game.png "$DEBIANNAME32"/opt/"$PACKAGENAME"/$ID.png
 cp "$CURRENT_DIR/"app.desktop.temp "$DEBIANNAME32"/usr/share/applications/"$ID".desktop
 
 if [ "$ARCH" == "32" ] || [ "$ARCH" == "both" ]; then
