@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 if [[ ! -e "$CURRENT_DIR"/mkxp-20180121 ]]; then
@@ -48,6 +48,8 @@ PACKAGENAME="$COMPANY_LOWER_DASH"-"$TITLE_LOWER_DASH"
 EXECUTABLENAME="$TITLE_LOWER_DASH"
 
 # TODO create the $ID.json file
+cp "$CURRENT_DIR/flatpak.example.json" "$CURRENT_DIR/$ID.json"
+
 
 echo "TODO"
 exit 9001
