@@ -1,4 +1,7 @@
 #!/bin/sh
+echo "script not ready for production."
+exit 9001
+
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 if [[ ! -e "$CURRENT_DIR"/mkxp-20180121 ]]; then

@@ -29,3 +29,5 @@ game.sh.temp
 tool/
 *.AppImage
 *.AppDir
+flatpak/
+*.flatpak
