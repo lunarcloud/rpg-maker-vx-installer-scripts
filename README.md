@@ -15,7 +15,7 @@ This was made to run on Linux.
 If you don't have Linux running yet, I suggest installing [VirtualBox](https://www.virtualbox.org) and installing the latest LTS version of [Ubuntu](https://www.ubuntu.com/download/desktop) on it.
 
 Ubuntu / Debian users can use this to set up:
-`sudo apt install curl icnsutils nsis wine`
+`sudo apt install curl icnsutils nsis wine flatpak-builder`
 
 ### Save Data
 You cannot, as is default, have save files where the program files live. Windows 7 or newer, Linux, and macOS do not allow this for installed applications, and expect you to save data to the current user's data folder.
