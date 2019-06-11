@@ -14,7 +14,7 @@ if [ "$PACKAGING" != "zip" ] && [ "$PACKAGING" != "dmg" ] && [ "$PACKAGING" != "
     PACKAGING="dmg"
 fi
 
-GAMEFOLDER=$(find "$DATA_DIR" ! -path "*_i386*" ! -path "*_amd64/*" ! -path "*.app*" -name 'Game.exe' -printf '%h\n' | sort -ur | tr -d '\n' | tr -d '\r')
+GAMEFOLDER=$(find "$DATA_DIR" ! -path "*_i386*" ! -path "*_amd64/*" ! -path "*.app*" ! -path "*.App*" ! -path "*flatpak/*" ! -path "*gamedir/*" -name 'Game.exe' -printf '%h\n' | sort -ur | tr -d '\n' | tr -d '\r')
 
 if [[ ! -d "$GAMEFOLDER" ]]; then
     echo "No game folder found inside \"$DATA_DIR\""

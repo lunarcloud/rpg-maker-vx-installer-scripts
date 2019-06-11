@@ -3,19 +3,77 @@
     "runtime": "org.freedesktop.Platform",
     "runtime-version": "18.08",
     "sdk": "org.freedesktop.Sdk",
-    "command": "game.sh",
+    "command": "relativepath/game.sh",
     "modules": [
         {
-            "name": "MyGame",
+            "name": "game",
             "buildsystem": "simple",
             "build-commands": [
-                "install -D game.sh /app/bin/game.sh"
+				"install -d /app/relativepath",
+				"for file in $(find gamedir -type f); do install -D ${file} ${/app/relativepath}/${file#${gamedir}}; done",
+				"install -D game.sh /app/relativepath/game.sh",
+				"install -D com.mycompany.MyGame.desktop /app/relativepath/com.mycompany.MyGame.desktop",
+				"install -D mkxp.linux.conf /app/relativepath/mkxp.linux.conf",
+				"install -D script-dialog.sh /app/relativepath/script-dialog/script-dialog.sh",
+				"install -D com.mycompany.MyGame.png /app/usr/share/pixmaps/com.mycompany.MyGame.png",
+				"install -D 128x128.png /app/usr/share/icons/hicolor/128x128/apps/com.mycompany.MyGame.png",
+				"install -D 256x256.png /app/usr/share/icons/hicolor/256x256/apps/com.mycompany.MyGame.png",
+				"install -D 512x512.png /app/usr/share/icons/hicolor/512x512/apps/com.mycompany.MyGame.png"
             ],
             "sources": [
-                {
-                    "type": "file",
-                    "path": "game.sh"
-                }
+				{
+					"type": "dir",
+					"path": "currentpath/gamedir"
+				},
+				{
+					"type": "dir",
+					"path": "libpath"
+				},
+				{
+					"type": "file",
+					"path": "currentpath/script-dialog/script-dialog.sh",
+					"dest-filename": "script-dialog.sh"
+				},
+				{
+					"type": "file",
+					"path": "currentpath/exename",
+					"dest-filename": "exeout"
+				},
+				{
+					"type": "file",
+					"path": "currentpath/game.sh.temp",
+					"dest-filename": "game.sh"
+				},
+				{
+					"type": "file",
+					"path": "currentpath/app.desktop.temp",
+					"dest-filename": "com.mycompany.MyGame.desktop"
+				},
+				{
+					"type": "file",
+					"path": "currentpath/mkxp.linux.conf",
+					"dest-filename": "mkxp.linux.conf"
+				},
+				{
+					"type": "file",
+					"path": "iconspath/com.mycompany.MyGame.png",
+					"dest-filename": "com.mycompany.MyGame.png"
+				},
+				{
+					"type": "file",
+					"path": "iconspath/128x128.png",
+					"dest-filename": "128x128.png"
+				},
+				{
+					"type": "file",
+					"path": "iconspath/256x256.png",
+					"dest-filename": "256x256.png"
+				},
+				{
+					"type": "file",
+					"path": "iconspath/512x512.png",
+					"dest-filename": "512x512.png"
+				}
             ]
         }
     ]

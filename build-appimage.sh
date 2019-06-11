@@ -32,7 +32,7 @@ if [ "$ARCH" != "32" ] && [ "$ARCH" != "64" ] && [ "$ARCH" != "both" ]; then
 fi
 
 # Get Variables
-GAMEFOLDER=$(find "$DATA_DIR" ! -path "*_i386*" ! -path "*_amd64/*" ! -path "*.app*" ! -path "*.App*" -name 'Game.exe' -printf '%h\n' | sort -ur | tr -d '\n' | tr -d '\r')
+GAMEFOLDER=$(find "$DATA_DIR" ! -path "*_i386*" ! -path "*_amd64/*" ! -path "*.app*" ! -path "*.App*" ! -path "*flatpak/*" ! -path "*gamedir/*" -name 'Game.exe' -printf '%h\n' | sort -ur | tr -d '\n' | tr -d '\r')
 
 if [[ ! -d "$GAMEFOLDER" ]]; then
     echo "No game folder found inside \"$DATA_DIR\""
@@ -62,6 +62,7 @@ HOMEPAGE=$(grep 'Homepage' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n'
 
 PACKAGENAME="$COMPANY_LOWER_DASH"-"$TITLE_LOWER_DASH"
 RELATIVEDIR="/opt/$PACKAGENAME"
+EXECUTABLENAME="$TITLE_LOWER_DASH"
 
 # Create game launcher script
 echo "Creating game launcher script..."
@@ -117,12 +118,14 @@ function createAppImage() {
         cp "$DATA_DIR"/company.png "$APPDIR/$RELATIVEDIR/"
     fi
 
-    # native size
+    # Icons
+
+    ## Native Size
     cp "$DATA_DIR"/game.png "$APPDIR/$ID.png"
     mkdir -p "$APPDIR/usr/share/pixmaps"
     cp "$DATA_DIR"/game.png "$APPDIR/usr/share/pixmaps/$ID.png"
 
-    # hicolor sizes
+    ## hicolor sizes
     SIZES=( "128" "256" "512")
     for SIZE in "${SIZES[@]}"; do
         ICONDIR="$APPDIR/usr/share/icons/hicolor/${SIZE}x${SIZE}/apps/"
