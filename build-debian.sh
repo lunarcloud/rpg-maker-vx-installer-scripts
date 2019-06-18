@@ -52,7 +52,7 @@ DEBIANNAME64="$PACKAGENAME"_"$VERSION"_amd64
 # Create game launcher script
 echo "Creating game launcher script..."
 cp "$CURRENT_DIR/"game.sh "$CURRENT_DIR/"game.sh.temp
-`sed -i "s|APPDIR=\(.*\)|APPDIR=$HOME/.local/share/$PACKAGENAME/|" "$CURRENT_DIR/"game.sh.temp`
+`sed -i "s|APPDIR=\(.*\)|APPDIR=\\$HOME/.local/share/$PACKAGENAME/|" "$CURRENT_DIR/"game.sh.temp`
 
 # Create temp control file
 echo "Creating control file..."

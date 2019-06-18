@@ -33,10 +33,12 @@ fi
 MACHINE_TYPE=`uname -m`
 if [ ${MACHINE_TYPE} == 'x86_64' ]; then
     MKXP_SUPPORT=true
-    LAUNCH="$CURRENT_DIR"$(find . -maxdepth 1 -name '*.amd64')
+    LAUNCH=$(find "$CURRENT_DIR" -maxdepth 1 -name '*.amd64')
+    LIBPATH="$CURRENT_DIR/lib"
 elif [ ${MACHINE_TYPE} == 'x86_64' ]; then
     MKXP_SUPPORT=true
-    LAUNCH="$CURRENT_DIR"$(find . -maxdepth 1 -name '*x86')
+    LAUNCH=$(find "$CURRENT_DIR" -maxdepth 1 -name '*x86')
+    LIBPATH="$CURRENT_DIR/lib64"
 else
     MKXP_SUPPORT=false
 fi
@@ -52,7 +54,7 @@ fi
 
 #detect wine
 if [ $MKXP_SUPPORT == true ] ; then # no wine, only mkxp
-	LD_LIBRARY_PATH="$CURRENT_DIR/lib" $LAUNCH
+	LD_LIBRARY_PATH="$LIBPATH" $LAUNCH
 elif command -v wine 2>/dev/null; then # have wine
 	wine "$CURRENT_DIR"Game.exe
 else # neither wine nor mkxp
