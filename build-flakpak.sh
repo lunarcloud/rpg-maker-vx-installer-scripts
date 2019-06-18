@@ -30,6 +30,8 @@ if [[ ! -d "$GAMEFOLDER" ]]; then
     exit 31;
 fi
 
+GAMEFOLDER_NAME=$(basename "$GAMEFOLDER")
+
 TITLE_UPPER=$(grep 'Title' "$GAMEFOLDER"/Game.ini | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
 TITLE_LOWER=$(echo $TITLE_UPPER  | tr '[:upper:]' '[:lower:]')
 TITLE_LOWER_UNDERSCORE=$(echo $TITLE_LOWER  | sed -e 's/ /_/g' | sed -e 's/\.//g')
@@ -54,12 +56,13 @@ RELATIVEDIR="/opt/$PACKAGENAME"
 # Copy game files to build path
 GAMETAR="$CURRENT_DIR/gamedir.tar"
 rm -r "$GAMETAR"
-tar -cf "$GAMETAR" "$GAMEFOLDER"
+tar -cf "$GAMETAR" -C "$GAMEFOLDER" .
 
 # Create game launcher script
 echo "Creating game launcher script..."
 cp "$CURRENT_DIR/"game.sh "$CURRENT_DIR/"game.sh.temp
-`sed -i "s|APPDIR=\(.*\)|APPDIR=$HOME/.local/share/$PACKAGENAME/|" "$CURRENT_DIR/"game.sh.temp`
+`sed -i "s|APPDIR=\(.*\)|APPDIR=\\$HOME/.local/share/$PACKAGENAME/|" "$CURRENT_DIR/"game.sh.temp`
+`sed -i "s|EXEC=\(.*\)|EXEC=$EXECUTABLENAME|" "$CURRENT_DIR/"game.sh.temp`
 
 # Create temp desktop file
 echo "Creating desktop file..."
@@ -92,6 +95,7 @@ CURRENT_DIR_ESCAPED=$(echo "$CURRENT_DIR" | sed -e 's/\./\\\./g' | sed -e 's/\//
 `sed -i "s/currentpath/$CURRENT_DIR_ESCAPED/g" "$CURRENT_DIR/$ID.json"`
 ICON_DIR_ESCAPED=$(echo "$CURRENT_DIR/icons" | sed -e 's/\./\\\./g' | sed -e 's/\//\\\//g')
 `sed -i "s/iconspath/$ICON_DIR_ESCAPED/g" "$CURRENT_DIR/$ID.json"`
+`sed -i "s/gamefoldername/$GAMEFOLDER_NAME/g" "$CURRENT_DIR/$ID.json"`
 
 function createFlatpak() {
     ARCH=$1
@@ -103,17 +107,20 @@ function createFlatpak() {
 	mkdir -p "$CURRENT_DIR/flatpak"
 
     # Prepare $ID.json
+    rm -r "$CURRENT_DIR/lib.tar"
     MKXP_PATH_ESCAPED=$(echo "$MKXP_PATH" | sed -e 's/\./\\\./g' | sed -e 's/\//\\\//g')
 	if [ "$ARCH" == "i386" ]; then
 		echo "Setting up 32bit mkxp..."
-		`sed -i "s/libpath/$MKXP_PATH_ESCAPED\/lib/g" "$CURRENT_DIR/$ID.json"`
 		`sed -i "s/exename/$MKXP_PATH_ESCAPED\/mkxp\.x86/g" "$CURRENT_DIR/$ID.json"`
 		`sed -i "s/exeout/$EXECUTABLENAME\.x86/g" "$CURRENT_DIR/$ID.json"`
+		`sed -i "s/libname/lib/g" "$CURRENT_DIR/$ID.json"`
+		tar -cf "$CURRENT_DIR/lib.tar" -C "$MKXP_PATH/lib" .
 	else
 		echo "Setting up 64bit mkxp..."
-		`sed -i "s/libpath/$MKXP_PATH_ESCAPED\/lib64/g" "$CURRENT_DIR/$ID.json"`
 		`sed -i "s/exename/$MKXP_PATH_ESCAPED\/mkxp\.amd64/g" "$CURRENT_DIR/$ID.json"`
 		`sed -i "s/exeout/$EXECUTABLENAME\.amd64/g" "$CURRENT_DIR/$ID.json"`
+		`sed -i "s/libname/lib64/g" "$CURRENT_DIR/$ID.json"`
+		tar -cf "$CURRENT_DIR/lib.tar" -C "$MKXP_PATH/lib64" .
 	fi
 
 	# Delete previous
@@ -152,7 +159,9 @@ if [ "$ARCH" == "64" ] || [ "$ARCH" == "both" ]; then
 fi
 
 # Cleanup
-#rm -r "$CURRENT_DIR/$ID.json"
-rm -r "$CURRENT_DIR/gamedir"
+rm -r "$CURRENT_DIR/$ID.json"
+rm -r "$CURRENT_DIR/gamedir.tar"
+    rm -r "$CURRENT_DIR/lib.tar"
+#rm -r "$CURRENT_DIR/flatpak"
 
 exit 0;

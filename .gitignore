@@ -34,3 +34,5 @@ flatpak/
 icons/
 *.json
 gamedir/
+gamedir.tar
+lib.tar
