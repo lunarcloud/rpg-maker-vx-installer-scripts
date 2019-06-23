@@ -7,7 +7,7 @@
     if OS.windows?
       directory_name = Dir.home + "/Application Data/My Game"
     elsif OS.linux?
-      directory_name = Dir.home + "/.mygame"
+      directory_name = Dir.home + "/.local/share/lowercasecompany-lowercasegame"
     elsif OS.mac?
       directory_name = Dir.home + "/Library/My Game"
     end
