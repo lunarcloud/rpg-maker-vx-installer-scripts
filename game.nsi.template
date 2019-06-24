@@ -48,14 +48,7 @@ ShowUnInstDetails show
 Section "MainSection" SEC01
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
-  File /r "${GAMEFOLDER}\Audio"
-  File /r "${GAMEFOLDER}\Data"
-  File /r "${GAMEFOLDER}\Fonts"
-  File /r "${GAMEFOLDER}\Graphics"
-  File /r "${GAMEFOLDER}\System"
-  File "${GAMEFOLDER}\Game.exe"
-  File "${GAMEFOLDER}\Game.ini"
-  ;File "${GAMEFOLDER}\Game.rvproj2"
+  File /r "${GAMEFOLDER}\*"
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME}"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME}.lnk" "$INSTDIR\Game.exe"
   CreateShortCut "$DESKTOP\${PRODUCT_NAME}.lnk" "$INSTDIR\Game.exe"
