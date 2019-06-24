@@ -43,6 +43,12 @@ if [[ ! -d "$CURRENT_DIR/$BUNDLE_NAME".app ]]; then
 fi
 cp -r "$GAMEFOLDER"/* "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/Resources/
 
+if [ -f $DATA_DIR/license.txt ]; then
+    cp -r $DATA_DIR/license.txt "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/MacOS/LICENSE
+    cp -r "$CURRENT_DIR/game.macOS.sh" "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/MacOS/game-launch
+    `sed -i "s|MyGame|$BUNDLE_NAME" "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/MacOS/game-launch`
+fi
+
 if [[ -f "$DATA_DIR"/game.png ]]; then
     cp "$DATA_DIR"/game.png "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/Resources/
     png2icns "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/Resources/game.icns "$DATA_DIR"/game.png
@@ -82,6 +88,24 @@ do
 		SAW_NAMELINE=true
 	fi
 done < "$PLIST"
+
+
+if [ -f $DATA_DIR/license.txt ]; then
+	#Update Executable in PFList
+	SAW_EXECLINE=false
+	LINE_NUM=0
+	while IFS= read -r line
+	do
+		((LINE_NUM++))
+		if [[ $SAW_EXECLINE == true ]]; then
+			sed -i "${LINE_NUM}s|<string>mkxp</string>|<string>game-launch</string>|" "$PLIST"
+			break;
+		fi
+		if [[ "$line" =~ "CFBundleExecutable" ]]; then
+			SAW_EXECLINE=true
+		fi
+	done < "$PLIST"
+fi
 
 if [ "$PACKAGING" == "zip" ] || [ "$PACKAGING" == "both" ]; then
     # create zip of the bundle
