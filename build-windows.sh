@@ -35,7 +35,7 @@ if [ -f "$DATA_DIR"/installer.ico ]; then
 else
     sed -i "s#define MUI_ICON \"\(.*\)\"#define MUI_ICON \"\$\{NSISDIR\}\\\\Contrib\\\\Graphics\\\\Icons\\\\modern-install.ico\"#"  "$CURRENT_DIR/game.nsi"
 fi
-"$CURRENT_DIR/change-exe-icon.sh"
+"$CURRENT_DIR/change-exe-icon.sh" "$DATA_DIR"
 
 cd "$CURRENT_DIR"
 makensis "$CURRENT_DIR/game.nsi"

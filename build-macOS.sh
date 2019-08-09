@@ -111,7 +111,7 @@ if [ "$PACKAGING" == "zip" ] || [ "$PACKAGING" == "both" ]; then
     # create zip of the bundle
     ZIP_NAME="$BUNDLE_NAME $VERSION macOS.zip"
 
-    zip -r "$CURRENT_DIR/$ZIP_NAME" "$CURRENT_DIR/$BUNDLE_NAME".app
+    zip -r "$CURRENT_DIR/$ZIP_NAME" "$BUNDLE_NAME".app
     if [ -f $DATA_DIR/license.txt ]; then
         zip -uj "$CURRENT_DIR/$ZIP_NAME" "$DATA_DIR"/license.txt
     fi

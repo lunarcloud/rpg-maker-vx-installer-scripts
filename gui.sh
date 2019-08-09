@@ -36,9 +36,10 @@ if [[ ! -d "$GAMEFOLDER" ]]; then
 fi
 
 ACTIVITY="Build Outputs"
-ANSWER=($(checklist "What outputs do you want to build? " 6  \
+ANSWER=($(checklist "What outputs do you want to build? " 7  \
                 "win" "Windows: NSIS Installer" ON\
                 "macdmg" "macOS: DMG with App Bundle and more inside" ON\
+                "maczip" "macOS: Zip with App Bundle and more inside" OFF\
                 "lin32" "Linux: 32-bit AppImage" OFF\
                 "lin64" "Linux: 64-bit AppImage" ON\
                 "deb32" "Linux: 32-bit Debian Package" OFF\
@@ -79,10 +80,14 @@ ACTIVITY="Building ${#ANSWER[*]} items..."
   fi
   progressbar_update 60
 
-  if [[ " ${ANSWER[@]} " =~ "macdmg" ]]; then
+  if [[ " ${ANSWER[@]} " =~ "macdmg" ]] && [[ " ${ANSWER[@]} " =~ "maczip" ]]; then
+    bash build-macOS.sh "$DATA_DIR" "both"
+  elif [[ " ${ANSWER[@]} " =~ "macdmg" ]]; then
     bash build-macOS.sh "$DATA_DIR" "dmg"
+  elif [[ " ${ANSWER[@]} " =~ "maczip" ]]; then
+    bash build-macOS.sh "$DATA_DIR" "zip"
   fi
-  progressbar_update 75
+  progressbar_update 80
 
   if [[ " ${ANSWER[@]} " =~ "win" ]]; then
     bash build-windows.sh "$DATA_DIR"
