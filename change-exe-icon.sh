@@ -29,9 +29,9 @@ if [[ -f "$DATA_DIR"/game.ico ]]; then
         fi
     fi
 
-    if [[ ! -e "$EXECUTABLE.bak" ]]; then
-        cp "$EXECUTABLE" "$EXECUTABLE.bak"
-    fi
+    #if [[ ! -e "$EXECUTABLE.bak" ]]; then
+        #cp "$EXECUTABLE" "$EXECUTABLE.bak"
+    #fi
 
     cp "$DATA_DIR/game.ico" "$DATA_DIR/1.ico"
 
