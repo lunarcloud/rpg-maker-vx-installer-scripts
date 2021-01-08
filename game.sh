@@ -39,6 +39,10 @@ elif [ ${MACHINE_TYPE} == 'x86_64' ]; then
     MKXP_SUPPORT=true
     LAUNCH=$(find "$CURRENT_DIR" -maxdepth 1 -name '*x86')
     LIBPATH="$CURRENT_DIR/lib64"
+elif [ ${MACHINE_TYPE} == 'armv7l' ]; then
+    MKXP_SUPPORT=true
+    LAUNCH=$(find "$CURRENT_DIR" -maxdepth 1 -name '*arm')
+    LIBPATH="$CURRENT_DIR/lib"
 else
     MKXP_SUPPORT=false
 fi
