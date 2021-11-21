@@ -79,6 +79,9 @@ cp -r "$GAMEFOLDER"/*   "$DEBIANNAME"/opt/"$PACKAGENAME"/
 cp "$CURRENT_DIR/"game.sh.temp              "$DEBIANNAME"/opt/"$PACKAGENAME"/game.sh
 cp "$CURRENT_DIR/"mkxp.linux-arm.conf      "$DEBIANNAME"/opt/"$PACKAGENAME"/mkxp.conf
 
+# Update icon location in config file
+`sed -i "s/iconPath=\(.*\)/iconPath="$ID".png/"  "$DEBIANNAME"/opt/"$PACKAGENAME"/mkxp.conf`
+
 #Copy script-dialog
 mkdir "$DEBIANNAME"/opt/"$PACKAGENAME"/script-dialog
 cp "$CURRENT_DIR/"script-dialog/script-dialog.sh "$DEBIANNAME"/opt/"$PACKAGENAME"/script-dialog/

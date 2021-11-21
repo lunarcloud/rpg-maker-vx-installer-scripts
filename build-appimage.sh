@@ -90,13 +90,16 @@ function createAppImage() {
     `sed -i "s|Name=\(.*\)|Name=$TITLE_UPPER|" "$DESKTOP_FILE"`
     `sed -i "s|Comment=\(.*\)|Comment=$( echo "$SHORT_DESCRIPTION" | sed -e 's/\./\\\./g')|" "$DESKTOP_FILE"`
     `sed -i "s/Exec=\(.*\)/Exec=\"\/opt\/"$PACKAGENAME"\/game.sh\"/" "$DESKTOP_FILE"`
-    `sed -i "s|Icon=\(.*\)|Icon=$(echo "$ID" | sed -e 's/\./\\\./g')|"  "$DESKTOP_FILE"`
+    `sed -i "s|Icon=\(.*\)|Icon=\/opt\/"$PACKAGENAME"\/$(echo "$ID" | sed -e 's/\./\\\./g')|"  "$DESKTOP_FILE"`
     `sed -i "s|Path=\(.*\)|Path=\/opt\/"$PACKAGENAME"\/|"  "$DESKTOP_FILE"`
 
     # Populating fakeroot...
     cp -r "$GAMEFOLDER"/* 				"$APPDIR/$RELATIVEDIR/"
 	cp "$CURRENT_DIR"/game.sh.temp      "$APPDIR/$RELATIVEDIR/game.sh"
-	cp "$CURRENT_DIR"/mkxp.linux.conf   "$APPDIR/$RELATIVEDIR/"
+	cp "$CURRENT_DIR"/mkxp.linux.conf   "$APPDIR/$RELATIVEDIR/mkxp.conf"
+	
+	# Update icon location in config file
+	`sed -i "s|iconPath=\(.*\)|iconPath="$RELATIVEDIR/$ID".png|"  "$APPDIR/$RELATIVEDIR/mkxp.conf"`
 
 	if [ "$ARCH" == "i386" ]; then
 		cp "$CURRENT_DIR"/mkxp-*/mkxp.x86   "$APPDIR/$RELATIVEDIR/$EXECUTABLENAME".x86
@@ -121,6 +124,7 @@ function createAppImage() {
     # Icons
 
     ## Native Size
+		cp "$DATA_DIR"/game.png "$APPDIR/$RELATIVEDIR/"$ID.png
     cp "$DATA_DIR"/game.png "$APPDIR/$ID.png"
     mkdir -p "$APPDIR/usr/share/pixmaps"
     cp "$DATA_DIR"/game.png "$APPDIR/usr/share/pixmaps/$ID.png"

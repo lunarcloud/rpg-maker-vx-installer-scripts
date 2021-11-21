@@ -94,6 +94,9 @@ cp -r "$GAMEFOLDER"/*   "$DEBIANNAME32"/opt/"$PACKAGENAME"/
 cp "$CURRENT_DIR/"game.sh.temp              "$DEBIANNAME32"/opt/"$PACKAGENAME"/game.sh
 cp "$CURRENT_DIR/"mkxp.linux.conf      "$DEBIANNAME32"/opt/"$PACKAGENAME"/mkxp.conf
 
+# Update icon location in config file
+`sed -i "s/iconPath=\(.*\)/iconPath="$ID".png/"  "$DEBIANNAME32"/opt/"$PACKAGENAME"/mkxp.conf`
+
 #Copy script-dialog
 mkdir "$DEBIANNAME32"/opt/"$PACKAGENAME"/script-dialog
 cp "$CURRENT_DIR/"script-dialog/script-dialog.sh "$DEBIANNAME32"/opt/"$PACKAGENAME"/script-dialog/
