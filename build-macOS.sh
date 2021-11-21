@@ -50,7 +50,9 @@ if [[ -f "$DATA_DIR"/game.png ]]; then
     # Modify "$BUNDLE_NAME".app/Contents/Info.plist to include the icon
 fi
 
-sed -i "s|^.*iconPath=.*|iconPath=game.png|" "$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Resources/mkxp.conf"
+# Config
+cp "$CURRENT_DIR/"mkxp.mac.conf      					"$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Resources/mkxp.conf"
+sed -i "s|^.*iconPath=.*|iconPath=game.png|" 	"$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Resources/mkxp.conf"
 
 PLIST="$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Info.plist"
 
