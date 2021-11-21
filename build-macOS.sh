@@ -41,6 +41,7 @@ if [[ ! -d "$CURRENT_DIR/$BUNDLE_NAME".app ]]; then
 	echo "can't build mac bundle."
 	exit 33
 fi
+mkdir -p "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/Resources/
 cp -r "$GAMEFOLDER"/* "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/Resources/
 
 if [[ -f "$DATA_DIR"/game.png ]]; then
