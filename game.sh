@@ -30,16 +30,18 @@ if [[ ! -f $LICENSE_ACCEPTED &&  -f $LICENSE ]]; then
     fi
 fi
 
+beginswith() { case $2 in "$1"*) true;; *) false;; esac; }
+
 MACHINE_TYPE=`uname -m`
 if [ ${MACHINE_TYPE} == 'x86_64' ]; then
     MKXP_SUPPORT=true
     LAUNCH=$(find "$CURRENT_DIR" -maxdepth 1 -name '*.amd64')
     LIBPATH="$CURRENT_DIR/lib"
-elif [ ${MACHINE_TYPE} == 'x86_64' ]; then
+elif [ ${MACHINE_TYPE} == 'x86' ]; then
     MKXP_SUPPORT=true
     LAUNCH=$(find "$CURRENT_DIR" -maxdepth 1 -name '*x86')
     LIBPATH="$CURRENT_DIR/lib64"
-elif [ ${MACHINE_TYPE} == 'armv7l' ]; then
+elif beginswith arm "$MACHINE_TYPE"; then
     MKXP_SUPPORT=true
     LAUNCH=$(find "$CURRENT_DIR" -maxdepth 1 -name '*arm')
     LIBPATH="$CURRENT_DIR/lib"
@@ -48,11 +50,13 @@ else
 fi
 
 if [[ ! -f $LAUNCH ]]; then
-    echo "Application file not found";
+    ACTIVITY="Unable to launch"
+    messagebox "Application file not found";
     exit 2;
 fi
 if [[ ! -x $LAUNCH ]]; then
-    echo "Application file does not have executable permission";
+    ACTIVITY="Unable to launch"
+    messagebox "Application file does not have executable permission";
     exit 3;
 fi
 
