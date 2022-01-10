@@ -99,7 +99,7 @@ function createAppImage() {
 	cp "$CURRENT_DIR"/mkxp.linux.conf   "$APPDIR/$RELATIVEDIR/mkxp.conf"
 	
 	# Update icon location in config file
-	`sed -i "s|iconPath=\(.*\)|iconPath="$RELATIVEDIR/$ID".png|"  "$APPDIR/$RELATIVEDIR/mkxp.conf"`
+	`sed -i "s|iconPath=\(.*\)|iconPath="$ID".png|"  "$APPDIR/$RELATIVEDIR/mkxp.conf"`
 
 	if [ "$ARCH" == "i386" ]; then
 		cp "$CURRENT_DIR"/mkxp-*/mkxp.x86   "$APPDIR/$RELATIVEDIR/$EXECUTABLENAME".x86
