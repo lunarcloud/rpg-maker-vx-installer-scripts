@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 CURRENT_DIR=$(dirname "$(readlink -f "$0")")/
 GUI=true
+OPTIONS="$@"
 source "$CURRENT_DIR"/script-dialog/script-dialog.sh #folder local version
 
 relaunchIfNotVisible
@@ -75,7 +76,7 @@ fi
 
 #detect wine
 if [ $MKXP_SUPPORT == true ] ; then # no wine, only mkxp
-	LD_LIBRARY_PATH="$LIBPATH" $LAUNCH
+	LD_LIBRARY_PATH="$LIBPATH" $LAUNCH "$OPTIONS"
 elif command -v wine 2>/dev/null; then # have wine
 	wine "$CURRENT_DIR"Game.exe
 else # neither wine nor mkxp
