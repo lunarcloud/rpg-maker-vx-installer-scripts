@@ -76,7 +76,7 @@ if [[ ! -f "$BASE_APP_GAMEDIR"/Game.exe ]]; then
 fi
 
 if [[ -f "$DATA_DIR"/game.png ]]; then
-    cp "$DATA_DIR"/game.png $BASE_APP_GAMEDIR
+    cp "$DATA_DIR"/game.png "$BASE_APP_GAMEDIR"
 
     # Overwrite the icon file
     png2icns "$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Resources/icon.icns" "$DATA_DIR"/game.png
@@ -170,9 +170,9 @@ if [ "$PACKAGING" == "dmg" ] || [ "$PACKAGING" == "both" ]; then
     rm -r "$CURRENT_DIR/"dmg-contents/"$BUNDLE_NAME".app
 fi
 
-#if [ "$PACKAGING" == "zip" ]; then
+if [ "$PACKAGING" == "zip" ]; then
     # clean up
-    #rm -r "$CURRENT_DIR/$BUNDLE_NAME".app
-#fi
+    rm -r "$CURRENT_DIR/$BUNDLE_NAME".app
+fi
 
 exit 0;
