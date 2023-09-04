@@ -2,11 +2,11 @@
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "$CURRENT_DIR"/script-dialog/script-dialog.sh #folder local version
 
-if [[ ! -e "$CURRENT_DIR"/mkxp-20180121 ]]; then
-	if [[ ! -e "$CURRENT_DIR"/mkxp-20180121.tar.xz ]]; then
-		wget http://ancurio.bplaced.net/mkxp/generic/mkxp-20180121.tar.xz -P "$CURRENT_DIR"/
-	fi
-    tar xf "$CURRENT_DIR"/mkxp*.tar.xz
+# Ensure we have the MKXP-Z build
+if [[ ! -f "$CURRENT_DIR/engine/linux/mkxp.json" ]]; then
+    echo "Please download linux 'mkxp-z' from 'https://github.com/mkxp-z/mkxp-z/actions' and extract files into $CURRENT_DIR/engine/linux/"
+    mkdir -p "$CURRENT_DIR/engine/linux/"
+    exit 32;
 fi
 
 APPIMAGETOOL="appimagetool-x86_64.AppImage"
@@ -20,6 +20,7 @@ if [[ ! -e "$CURRENT_DIR/tool/$APPIMAGETOOL" ]]; then
 fi
 APPIMAGETOOL="$CURRENT_DIR/tool/$APPIMAGETOOL"
 
+
 if [[ $# -eq 0 ]] ; then
     DATA_DIR="."
 else
@@ -27,8 +28,9 @@ else
     ARCH="$2"
 fi
 
-if [ "$ARCH" != "32" ] && [ "$ARCH" != "64" ] && [ "$ARCH" != "both" ]; then
-    ARCH="both"
+# There only seems to be 64bit support right now anyway
+if [ "$ARCH" == "" ]; then
+    ARCH="x86_64"
 fi
 
 # Get Variables
@@ -73,8 +75,13 @@ function createAppImage() {
     ARCH=$1
     echo "creating app image ($ARCH)"
 
-    APPDIR="$CURRENT_DIR/$TITLE_UNDERSCORE-$ARCH.AppDir"
-    APPIMAGE="$CURRENT_DIR/$TITLE_UNDERSCORE-$ARCH.AppImage"
+    if [ "$ARCH" == "x86_64" ]; then
+        APPDIR="$CURRENT_DIR/$TITLE_UNDERSCORE.AppDir"
+        APPIMAGE="$CURRENT_DIR/$TITLE_UNDERSCORE.AppImage"
+    else
+        APPDIR="$CURRENT_DIR/$TITLE_UNDERSCORE-$ARCH.AppDir"
+        APPIMAGE="$CURRENT_DIR/$TITLE_UNDERSCORE-$ARCH.AppImage"
+    fi
 
     # Setup Folder
     rm -r "$APPDIR/$RELATIVEDIR"
@@ -95,19 +102,19 @@ function createAppImage() {
 
     # Populating fakeroot...
     cp -r "$GAMEFOLDER"/* 				"$APPDIR/$RELATIVEDIR/"
-	cp "$CURRENT_DIR"/game.sh.temp      "$APPDIR/$RELATIVEDIR/game.sh"
-	cp "$CURRENT_DIR"/mkxp.linux.conf   "$APPDIR/$RELATIVEDIR/mkxp.conf"
-	
-	# Update icon location in config file
-	`sed -i "s|iconPath=\(.*\)|iconPath="$ID".png|"  "$APPDIR/$RELATIVEDIR/mkxp.conf"`
+    cp "$CURRENT_DIR"/game.sh.temp      "$APPDIR/$RELATIVEDIR/game.sh"
+    cp "$CURRENT_DIR"/mkxp.linux.json   "$APPDIR/$RELATIVEDIR/mkxp.json"
 
-	if [ "$ARCH" == "i386" ]; then
-		cp "$CURRENT_DIR"/mkxp-*/mkxp.x86   "$APPDIR/$RELATIVEDIR/$EXECUTABLENAME".x86
-		cp -r "$CURRENT_DIR"/mkxp-*/lib        "$APPDIR/$RELATIVEDIR/lib"
-	else
-		cp "$CURRENT_DIR"/mkxp-*/mkxp.amd64   "$APPDIR/$RELATIVEDIR/$EXECUTABLENAME".amd64
-		cp -r "$CURRENT_DIR"/mkxp-*/lib64        "$APPDIR/$RELATIVEDIR/lib"
-	fi
+    # TODO Update icon location in config file
+    #`sed -i "s|iconPath=\(.*\)|iconPath="$ID".png|"  "$APPDIR/$RELATIVEDIR/mkxp.conf"`
+
+    if [ "$ARCH" == "i386" ]; then
+        cp "$CURRENT_DIR"/engine/linux/mkxp-z.x86   "$APPDIR/$RELATIVEDIR/$EXECUTABLENAME".x86
+    else
+        cp "$CURRENT_DIR"/engine/linux/mkxp-z.x86_64   "$APPDIR/$RELATIVEDIR/$EXECUTABLENAME".amd64
+    fi
+        cp -r "$CURRENT_DIR"/engine/linux/lib*        "$APPDIR/$RELATIVEDIR/"
+    cp -r "$CURRENT_DIR"/engine/linux/stdlib        "$APPDIR/$RELATIVEDIR/"
 
     # Add script-dialog
     SCRIPT_DIAG_DIR="$APPDIR/$RELATIVEDIR/script-dialog/"
@@ -140,17 +147,12 @@ function createAppImage() {
     rm $APPIMAGE # delete previous
     ARCH=$ARCH "$APPIMAGETOOL" -n "$APPDIR" "$APPIMAGE"
 
-    # Cleanup
+    # Cleanup if nothing to debug
     if [ $? -eq 0 ]; then
         rm -r "$APPDIR"
     fi
 }
 
-if [ "$ARCH" == "32" ] || [ "$ARCH" == "both" ]; then
-    createAppImage "i386"
-fi
-if [ "$ARCH" == "64" ] || [ "$ARCH" == "both" ]; then
-    createAppImage "x86_64"
-fi
+createAppImage "$ARCH"
 
 exit 0;

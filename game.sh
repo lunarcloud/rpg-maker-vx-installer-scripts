@@ -36,13 +36,13 @@ beginswith() { case $2 in "$1"*) true;; *) false;; esac; }
 MACHINE_TYPE=`uname -m`
 
 LAUNCH_AMD64=$(find "$CURRENT_DIR" -maxdepth 1 -name '*.amd64')
-LAUNCH_X86=$(find "$CURRENT_DIR" -maxdepth 1 -name '*x86')
+LAUNCH_X86=$(find "$CURRENT_DIR" -maxdepth 1 -name '*.x86')
 
 if [ ${MACHINE_TYPE} == 'x86_64' ]; then
     MKXP_SUPPORT=true
     LAUNCH=$LAUNCH_AMD64
     LIBPATH="$CURRENT_DIR/lib64"
-    
+
     # Use 32bit if the 64bit isn't available
     if [[ ! -f $LAUNCH_AMD64 ]]; then
 			LAUNCH=$LAUNCH_X86
@@ -50,7 +50,7 @@ if [ ${MACHINE_TYPE} == 'x86_64' ]; then
     # Use 'lib' if there's no 'lib64'
     if [[ ! -f $LIBPATH ]]; then
 			LIBPATH="$CURRENT_DIR/lib"
-    fi    
+    fi
 elif [ ${MACHINE_TYPE} == 'x86' ]; then
     MKXP_SUPPORT=true
     LAUNCH=$LAUNCH_X86

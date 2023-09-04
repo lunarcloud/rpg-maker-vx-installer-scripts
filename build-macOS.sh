@@ -1,6 +1,13 @@
 #!/bin/bash
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+# Ensure we have the MKXP-Z build
+if [[ ! -d "$CURRENT_DIR/engine/macos/Z-universal.app" ]]; then
+    echo "Please download 'mkxp-z' macos from 'https://github.com/mkxp-z/mkxp-z/actions' and extract Z-universal.app into $CURRENT_DIR/engine/macos/"
+    mkdir -p "$CURRENT_DIR/engine/macos/"
+    exit 32;
+fi
+
 # Get Variables
 
 if [[ $# -eq 0 ]] ; then
@@ -22,69 +29,72 @@ if [[ ! -d "$GAMEFOLDER" ]]; then
 fi
 
 BUNDLE_NAME=$(grep 'Title' "$GAMEFOLDER"/Game.ini | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
+ID=$(grep 'Id' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r' | tr -d '[:space:]')
 VERSION=$(grep 'Version' "$DATA_DIR"/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
 
-MKXP_MAC="mkxp-6-8-2018-withrubyzlib.zip"
-
-if [[ ! -e "$CURRENT_DIR/$MKXP_MAC" ]]; then
-    echo "Please download '$MKXP_MAC' from 'https://app.box.com/v/mkxpmacbuilds' and place into $CURRENT_DIR"
-    exit 32;
-fi
-
-if [[ ! -d "$CURRENT_DIR/mkxp_mac/mkxp.app" ]]; then
-    unzip "$CURRENT_DIR/$MKXP_MAC" -d "$CURRENT_DIR/mkxp_mac"
-fi
-
 rm -rf "$CURRENT_DIR/$BUNDLE_NAME".app
-cp -r "$CURRENT_DIR/mkxp_mac/mkxp.app" "$CURRENT_DIR/$BUNDLE_NAME".app
+cp -r "$CURRENT_DIR/engine/macos/Z-universal.app" "$CURRENT_DIR/$BUNDLE_NAME".app
 if [[ ! -d "$CURRENT_DIR/$BUNDLE_NAME".app ]]; then
 	echo "can't build mac bundle."
 	exit 33
 fi
-mkdir -p "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/Resources/
-cp -r "$GAMEFOLDER"/* "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/Resources/
+mkdir -p "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/Game/
+cp -r "$GAMEFOLDER"/* "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/Game/
 
 if [[ -f "$DATA_DIR"/game.png ]]; then
-    cp "$DATA_DIR"/game.png "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/Resources/
-    png2icns "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/Resources/game.icns "$DATA_DIR"/game.png
+    cp "$DATA_DIR"/game.png "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/Game/
+    # Overwrite the icon file
+    png2icns "$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Resources/icon.icns" "$DATA_DIR"/game.png
     # Modify "$BUNDLE_NAME".app/Contents/Info.plist to include the icon
 fi
 
 # Config
-cp "$CURRENT_DIR/"mkxp.mac.conf      					"$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Resources/mkxp.conf"
-sed -i "s|^.*iconPath=.*|iconPath=game.png|" 	"$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Resources/mkxp.conf"
+cp "$CURRENT_DIR/"mkxp.macos.json      					"$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Game/mkxp.json"
+# TODO update the icon
+#sed -i "s|^.*iconPath=.*|iconPath=game.png|" 	"$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Game/mkxp.json"
 
 PLIST="$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Info.plist"
 
-#Update Icon in PFList
-SAW_ICONLINE=false
+# Things to update in the PFList
+SAW_NAMELINE=false
+SAW_IDLINE=false
+SAW_VERSIONLINE=false
 LINE_NUM=0
+
+#Update Name in PFList
 while IFS= read -r line
 do
 	((LINE_NUM++))
-	if [[ $SAW_ICONLINE == true ]]; then
-		sed -i "${LINE_NUM}s|<string></string>|<string>game</string>|" "$PLIST"
-		break;
+
+	if [[ $SAW_NAMELINE == true ]]; then
+		sed -i "${LINE_NUM}s|<string>.*</string>|<string>$BUNDLE_NAME</string>|" "$PLIST"
+		SAW_NAMELINE=false
+		continue
+	elif [[ "$line" =~ "CFBundleName" ]] || [[ "$line" =~ "CFBundleGetInfoString" ]]; then
+		SAW_NAMELINE=true
+		continue
 	fi
-	if [[ "$line" =~ "CFBundleIconFile" ]]; then
-		SAW_ICONLINE=true
+
+	if [[ $SAW_IDLINE == true ]]; then
+		sed -i "${LINE_NUM}s|<string>.*</string>|<string>$ID</string>|" "$PLIST"
+		SAW_IDLINE=false
+		continue
+	elif [[ "$line" =~ "CFBundleIdentifier" ]]; then
+		SAW_IDLINE=true
+		continue
+	fi
+
+	if [[ $SAW_VERSIONLINE == true ]]; then
+		sed -i "${LINE_NUM}s|<string>.*</string>|<string>$VERSION</string>|" "$PLIST"
+		SAW_VERSIONLINE=false
+		continue
+	elif [[ "$line" =~ "CFBundleShortVersionString" ]]; then
+		SAW_VERSIONLINE=true
+		continue
 	fi
 done < "$PLIST"
 
-#Update Name in PFList
-SAW_NAMELINE=false
-LINE_NUM=0
-while IFS= read -r line
-do
-	((LINE_NUM++))
-	if [[ $SAW_NAMELINE == true ]]; then
-		sed -i "${LINE_NUM}s|<string></string>|<string>$BUNDLE_NAME</string>|" "$PLIST"
-		break;
-	fi
-	if [[ "$line" =~ "CFBundleName" ]]; then
-		SAW_NAMELINE=true
-	fi
-done < "$PLIST"
+
 
 if [ "$PACKAGING" == "zip" ] || [ "$PACKAGING" == "both" ]; then
     # create zip of the bundle
