@@ -23,6 +23,7 @@ if [[ -f "$DATA_DIR"/game.ico ]]; then
             # download the archive
             wget http://www.angusj.com/resourcehacker/resource_hacker.zip -P "$CURRENT_DIR"/tool
         fi
+        mkdir -p "$CURRENT_DIR"/tool/
         unzip "$CURRENT_DIR"/tool/resource_hacker.zip -d "$CURRENT_DIR"/tool/resource_hacker
         if [[ ! -d "$CURRENT_DIR"/tool/resource_hacker ]]; then
             echo "resource hacker tool does not exist"
