@@ -1,13 +1,6 @@
 #!/bin/bash
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Ensure we have the MKXP-Z build
-if [[ ! -d "$CURRENT_DIR/engine/macos/Z-universal.app" ]]; then
-    echo "Please download 'mkxp-z' macos from 'https://github.com/mkxp-z/mkxp-z/actions' and extract Z-universal.app into $CURRENT_DIR/engine/macos/"
-    mkdir -p "$CURRENT_DIR/engine/macos/"
-    exit 32;
-fi
-
 # Get Variables
 
 if [[ $# -eq 0 ]] ; then
@@ -32,31 +25,75 @@ BUNDLE_NAME=$(grep 'Title' "$GAMEFOLDER"/Game.ini | cut -d'=' -f 2 | tr -d '\n' 
 ID=$(grep 'Id' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r' | tr -d '[:space:]')
 VERSION=$(grep 'Version' "$DATA_DIR"/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
 
+
+BASE_APP="$CURRENT_DIR/engine/macos/mkxp.app"
+if [[ ! -d "$BASE_APP" ]]; then
+    echo "Please download 'mkxp' macos and extract mkxp.app into $CURRENT_DIR/engine/macos/"
+    mkdir -p "$CURRENT_DIR/engine/macos/"
+    exit 32;
+fi
+
+# Ensure we have the MKXP[-Z] build
+if [[ ! -d "$CURRENT_DIR/engine/macos/" ]]; then
+    mkdir -p "$CURRENT_DIR/engine/macos/"
+    exit 32;
+fi
+
+BASE_APP="$CURRENT_DIR/engine/macos/mkxp.app"
+BASE_APP_GAMEDIR="$CURRENT_DIR/$BUNDLE_NAME".app/Contents/Resources/
+CONF_JSON=false
+
+if [[ ! -d "$BASE_APP" ]]; then
+    BASE_APP="$CURRENT_DIR/engine/macos/Z-universal.app"
+    BASE_APP_GAMEDIR="$CURRENT_DIR/$BUNDLE_NAME".app/Contents/Game/
+    CONF_JSON=true
+
+    if [[ ! -d "$BASE_APP" ]]; then
+        echo "Please download 'mkxp-z' macos from 'https://github.com/mkxp-z/mkxp-z/actions' and extract Z-universal.app into $CURRENT_DIR/engine/macos/"
+        exit 32;
+    fi
+fi
+
+if [ "$CONF_JSON" = true ]; then
+    echo "Using MKXP-Z macOS engine"
+else
+    echo "Using MKXP macOS engine"
+fi
+
 rm -rf "$CURRENT_DIR/$BUNDLE_NAME".app
-cp -r "$CURRENT_DIR/engine/macos/Z-universal.app" "$CURRENT_DIR/$BUNDLE_NAME".app
+cp -r "$BASE_APP" "$CURRENT_DIR/$BUNDLE_NAME".app
 if [[ ! -d "$CURRENT_DIR/$BUNDLE_NAME".app ]]; then
 	echo "can't build mac bundle."
 	exit 33
 fi
-mkdir -p "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/Game/
-cp -r "$GAMEFOLDER"/* "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/Game/
+mkdir -p "$BASE_APP_GAMEDIR"
+mkdir -p "$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Resources/"
+cp -r "$GAMEFOLDER"/* "$BASE_APP_GAMEDIR"
+
+if [[ ! -f "$BASE_APP_GAMEDIR"/Game.exe ]]; then
+    echo "Couldn't copy game files to $BASE_APP_GAMEDIR"
+    exit 32
+fi
 
 if [[ -f "$DATA_DIR"/game.png ]]; then
-    cp "$DATA_DIR"/game.png "$CURRENT_DIR/$BUNDLE_NAME".app/Contents/Game/
+    cp "$DATA_DIR"/game.png $BASE_APP_GAMEDIR
+
     # Overwrite the icon file
     png2icns "$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Resources/icon.icns" "$DATA_DIR"/game.png
-    # Modify "$BUNDLE_NAME".app/Contents/Info.plist to include the icon
 fi
 
 # Config
-cp "$CURRENT_DIR/"mkxp.macos.json      					"$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Game/mkxp.json"
-# TODO update the icon
-#sed -i "s|^.*iconPath=.*|iconPath=game.png|" 	"$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Game/mkxp.json"
-
+if [ "$CONF_JSON" = true ]; then
+    cp "$CURRENT_DIR/"mkxp.macos.json      					"$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Game/mkxp.json"
+else
+    cp "$CURRENT_DIR/"mkxp.mac.conf      					"$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Resources/mkxp.conf"
+    sed -i "s|^.*iconPath=.*|iconPath=game.png|" 	"$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Resources/mkxp.conf"
+fi
 PLIST="$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Info.plist"
 
 # Things to update in the PFList
 SAW_NAMELINE=false
+SAW_ICONLINE=false
 SAW_IDLINE=false
 SAW_VERSIONLINE=false
 LINE_NUM=0
@@ -72,6 +109,16 @@ do
 		continue
 	elif [[ "$line" =~ "CFBundleName" ]] || [[ "$line" =~ "CFBundleGetInfoString" ]]; then
 		SAW_NAMELINE=true
+		continue
+	fi
+
+	if [[ $SAW_ICONLINE == true ]]; then
+		sed -i "${LINE_NUM}s|<string>.*</string>|<string>icon</string>|" "$PLIST"
+		SAW_ICONLINE=false
+		continue
+	fi
+	if [[ "$line" =~ "CFBundleIconFile" ]]; then
+		SAW_ICONLINE=true
 		continue
 	fi
 
@@ -100,9 +147,9 @@ if [ "$PACKAGING" == "zip" ] || [ "$PACKAGING" == "both" ]; then
     # create zip of the bundle
     ZIP_NAME="$BUNDLE_NAME $VERSION macOS.zip"
 
-    zip -r "$CURRENT_DIR/$ZIP_NAME" "$BUNDLE_NAME".app
+    zip -rq "$CURRENT_DIR/$ZIP_NAME" "$BUNDLE_NAME".app
     if [ -f $DATA_DIR/license.txt ]; then
-        zip -uj "$CURRENT_DIR/$ZIP_NAME" "$DATA_DIR"/license.txt
+        zip -ujq "$CURRENT_DIR/$ZIP_NAME" "$DATA_DIR"/license.txt
     fi
 fi
 
@@ -123,9 +170,9 @@ if [ "$PACKAGING" == "dmg" ] || [ "$PACKAGING" == "both" ]; then
     rm -r "$CURRENT_DIR/"dmg-contents/"$BUNDLE_NAME".app
 fi
 
-if [ "$PACKAGING" == "zip" ]; then
+#if [ "$PACKAGING" == "zip" ]; then
     # clean up
-    rm -r "$CURRENT_DIR/$BUNDLE_NAME".app
-fi
+    #rm -r "$CURRENT_DIR/$BUNDLE_NAME".app
+#fi
 
 exit 0;

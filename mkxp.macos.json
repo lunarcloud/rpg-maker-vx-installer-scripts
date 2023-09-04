@@ -39,7 +39,7 @@
     // If this fails, the version defaults to 1.
     // (default: 0)
     //
-    // "rgssVersion": 1,
+    "rgssVersion": 3,
 
 
     // Continuously print average FPS to console.
@@ -60,7 +60,7 @@
     // always be toggled with Alt-Enter at runtime)
     // (default: disabled)
     //
-    "fullscreen": true,
+    // "fullscreen": true,
 
 
     // Preserve game screen aspect ratio,
@@ -96,7 +96,7 @@
     // in RGSS2 or higher).
     // (default: 0)
     //
-    "defScreenW": 1024,
+    "defScreenW": 1088,
 
 
     // Specify the window height on startup. If set to 0,
@@ -105,7 +105,7 @@
     // in RGSS2 or higher).
     // (default: 0)
     //
-    "defScreenH": 782,
+    "defScreenH": 832,
 
 
     // Override the game window title
@@ -160,7 +160,7 @@
     // the Steam overlay.
     // (default: true if Apple Silicon, false if Intel)
     //
-    // "preferMetalRenderer": true,
+    // "preferMetalRenderer": false,
 
 
     // Work around buggy graphics drivers which don't
@@ -416,5 +416,14 @@
     //  "b": "Cancel",
     //  "x": ...
     // }
-
+    "bindingNames": {
+      "z": "Interact",
+      "x": "Menu / Cancel",
+      "a": "Run",
+      "b": "-",
+      "c": "-",
+      "y": "-",
+      "l": "-",
+      "r": "-"
+    }
 }
