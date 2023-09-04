@@ -40,15 +40,16 @@ LAUNCH_X86=$(find "$CURRENT_DIR" -maxdepth 1 -name '*.x86')
 
 if [ ${MACHINE_TYPE} == 'x86_64' ]; then
     MKXP_SUPPORT=true
-    LAUNCH=$LAUNCH_AMD64
-    LIBPATH="$CURRENT_DIR/lib64"
 
+    LAUNCH=$LAUNCH_AMD64
     # Use 32bit if the 64bit isn't available
     if [[ ! -f $LAUNCH_AMD64 ]]; then
 			LAUNCH=$LAUNCH_X86
     fi
+
+    LIBPATH="$CURRENT_DIR/lib64"
     # Use 'lib' if there's no 'lib64'
-    if [[ ! -f $LIBPATH ]]; then
+    if [[ ! -d $LIBPATH ]]; then
 			LIBPATH="$CURRENT_DIR/lib"
     fi
 elif [ ${MACHINE_TYPE} == 'x86' ]; then
@@ -57,7 +58,7 @@ elif [ ${MACHINE_TYPE} == 'x86' ]; then
     LIBPATH="$CURRENT_DIR/lib"
 elif beginswith arm "$MACHINE_TYPE"; then
     MKXP_SUPPORT=true
-    LAUNCH=$(find "$CURRENT_DIR" -maxdepth 1 -name '*arm')
+    LAUNCH=$(find "$CURRENT_DIR" -maxdepth 1 -name '*.arm')
     LIBPATH="$CURRENT_DIR/lib"
 else
     MKXP_SUPPORT=false
@@ -76,9 +77,9 @@ fi
 
 #detect wine
 if [ $MKXP_SUPPORT == true ] ; then # no wine, only mkxp
-	LD_LIBRARY_PATH="$LIBPATH" $LAUNCH "$OPTIONS"
+    LD_LIBRARY_PATH=$LIBPATH:$LD_LIBRARY_PATH $LAUNCH "$OPTIONS"
 elif command -v wine 2>/dev/null; then # have wine
-	wine "$CURRENT_DIR"Game.exe
+    wine "$CURRENT_DIR"Game.exe
 else # neither wine nor mkxp
     ACTIVITY="Unable to launch"
     messagebox "Unable to launch on machine type $MACHINE_TYPE without wine installed";
