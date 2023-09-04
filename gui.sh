@@ -36,26 +36,15 @@ if [[ ! -d "$GAMEFOLDER" ]]; then
 fi
 
 ACTIVITY="Build Outputs"
-ANSWER=($(checklist "What outputs do you want to build? " 7  \
+ANSWER=($(checklist "What outputs do you want to build? " 5  \
                 "win" "Windows: NSIS Installer" ON\
                 "macdmg" "macOS: DMG with App Bundle and more inside" ON\
                 "maczip" "macOS: Zip with App Bundle and more inside" OFF\
                 "lin32" "Linux: 32-bit AppImage" OFF\
-                "lin64" "Linux: 64-bit AppImage" ON\
-                "deb32" "Linux: 32-bit Debian Package" OFF\
-                "deb64" "Linux: 64-bit Debian Package" OFF))
+                "lin64" "Linux: 64-bit AppImage" ON))
 
 if [[ "${ANSWER[@]}" == "" ]]; then
   exit 0;
-fi
-
-if [[ " ${ANSWER[@]} " =~ "macdmg" ]] || [[ " ${ANSWER[@]} " =~ "maczip" ]]; then
-    MKXP_MAC="mkxp-6-8-2018-withrubyzlib.zip"
-
-    if [[ ! -f "$CURRENT_DIR/$MKXP_MAC" ]]; then
-        messagebox "Please '$MKXP_MAC' download from 'https://app.box.com/v/mkxpmacbuilds' to \"$CURRENT_DIR\"."
-        exit 32;
-    fi
 fi
 
 ACTIVITY="Building ${#ANSWER[*]} items..."

@@ -2,7 +2,7 @@
 Create installers for RPG Maker XP or VX (Ace) games for Windows, Mac, and Linux (Debian / Ubuntu).
 
 ## Engine
-On Linux and Mac, [mkxp](https://github.com/Ancurio/mkxp) is used as the native game executable.
+On Linux and Mac, [mkxp](https://github.com/Ancurio/mkxp) and/or [mkxp-z](https://github.com/mkxp-z/mkxp-z) is used as the native game executable.
 Please refer to their documentation for compatibility issues with running your game.
 
 ## Downloading
@@ -20,7 +20,7 @@ Ubuntu / Debian users can use this to set up:
 ### Save Data
 You cannot, as is default, have save files where the program files live. Windows 7 or newer, Linux, and macOS do not allow this for installed applications, and expect you to save data to the current user's data folder.
 
-See DataManager.example.rb for an example of script changes to do this.
+See example files\DataManager.rb for an example of script changes to do this.
 
 ### No Extra DLLs
 Your game cannot be using any special addons that require DLLs. MXKP is used to replace the standard RPG Maker software (and it's DLLs) and it does not use any sort of emulation that might enable your extra DLLs to work.

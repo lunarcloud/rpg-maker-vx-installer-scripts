@@ -84,10 +84,10 @@ fi
 
 # Config
 if [ "$CONF_JSON" = true ]; then
-    cp "$CURRENT_DIR/"mkxp.macos.json      					"$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Game/mkxp.json"
+    cp "$CURRENT_DIR/resources/macos/"mkxp.macos.json "$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Game/mkxp.json"
 else
-    cp "$CURRENT_DIR/"mkxp.mac.conf      					"$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Resources/mkxp.conf"
-    sed -i "s|^.*iconPath=.*|iconPath=game.png|" 	"$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Resources/mkxp.conf"
+    cp "$CURRENT_DIR/resources/macos/"mkxp.macos.conf   "$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Resources/mkxp.conf"
+    sed -i "s|^.*iconPath=.*|iconPath=game.png|" 	    "$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Resources/mkxp.conf"
 fi
 PLIST="$CURRENT_DIR/$BUNDLE_NAME.app/Contents/Info.plist"
 
@@ -156,7 +156,7 @@ fi
 if [ "$PACKAGING" == "dmg" ] || [ "$PACKAGING" == "both" ]; then
     # create dmg for the bundle
 
-    mv "$CURRENT_DIR/$BUNDLE_NAME".app "$CURRENT_DIR/dmg-contents/$BUNDLE_NAME.app"
+    mv "$CURRENT_DIR/$BUNDLE_NAME".app "$CURRENT_DIR/resources/macos/dmg-contents/$BUNDLE_NAME.app"
     png2icns "$CURRENT_DIR/dmg-contents/.VolumeIcon.icns" "$DATA_DIR/game.png"
     if [ -f $DATA_DIR/license.txt ]; then
         cp "$DATA_DIR"/license.txt "$CURRENT_DIR/"dmg-contents/

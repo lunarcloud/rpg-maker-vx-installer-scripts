@@ -11,14 +11,14 @@ fi
 
 APPIMAGETOOL="appimagetool-x86_64.AppImage"
 
-if [[ ! -e "$CURRENT_DIR/tool/$APPIMAGETOOL" ]]; then
+if [[ ! -e "$CURRENT_DIR/resources/tool/$APPIMAGETOOL" ]]; then
     mkdir -p "$CURRENT_DIR/tool"
     cd "$CURRENT_DIR/tool"
     curl -O -J -L https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -o "$APPIMAGETOOL"
     superuser chmod +x "$APPIMAGETOOL"
     cd "$CURRENT_DIR"
 fi
-APPIMAGETOOL="$CURRENT_DIR/tool/$APPIMAGETOOL"
+APPIMAGETOOL="$CURRENT_DIR/resources/tool/$APPIMAGETOOL"
 
 
 if [[ $# -eq 0 ]] ; then
@@ -68,7 +68,7 @@ EXECUTABLENAME="$TITLE_LOWER_DASH"
 
 # Create game launcher script
 echo "Creating game launcher script..."
-cp "$CURRENT_DIR/"game.sh "$CURRENT_DIR/"game.sh.temp
+cp "$CURRENT_DIR/resources/linux/game.sh" "$CURRENT_DIR/"game.sh.temp
 `sed -i "s|APPDIR=\(.*\)|APPDIR=\\$HOME/.local/share/$PACKAGENAME/|" "$CURRENT_DIR/"game.sh.temp`
 
 function createAppImage() {
@@ -87,13 +87,13 @@ function createAppImage() {
     rm -r "$APPDIR/$RELATIVEDIR"
     mkdir -p "$APPDIR/$RELATIVEDIR"
 
-    cp "$CURRENT_DIR/linux-appimage/AppRun" "$APPDIR/"
+    cp "$CURRENT_DIR/resources/linux/AppRun" "$APPDIR/"
     `sed -i "s|GAME_DIR=\(.*\)|GAME_DIR=\"$RELATIVEDIR\"|" "$APPDIR/AppRun"`
     `sed -i "s|GAME_EXEC=\(.*\)|GAME_EXEC=\"game.sh\"|" "$APPDIR/AppRun"`
 
     # Creating desktop file...
     DESKTOP_FILE="$APPDIR/$ID.desktop"
-    cp "$CURRENT_DIR/app.desktop" "$DESKTOP_FILE"
+    cp "$CURRENT_DIR/resources/linux/app.desktop" "$DESKTOP_FILE"
     `sed -i "s|Name=\(.*\)|Name=$TITLE_UPPER|" "$DESKTOP_FILE"`
     `sed -i "s|Comment=\(.*\)|Comment=$( echo "$SHORT_DESCRIPTION" | sed -e 's/\./\\\./g')|" "$DESKTOP_FILE"`
     `sed -i "s/Exec=\(.*\)/Exec=\"\/opt\/"$PACKAGENAME"\/game.sh\"/" "$DESKTOP_FILE"`
@@ -103,10 +103,7 @@ function createAppImage() {
     # Populating fakeroot...
     cp -r "$GAMEFOLDER"/* 				"$APPDIR/$RELATIVEDIR/"
     cp "$CURRENT_DIR"/game.sh.temp      "$APPDIR/$RELATIVEDIR/game.sh"
-    cp "$CURRENT_DIR"/mkxp.linux.json   "$APPDIR/$RELATIVEDIR/mkxp.json"
-
-    # TODO Update icon location in config file
-    #`sed -i "s|iconPath=\(.*\)|iconPath="$ID".png|"  "$APPDIR/$RELATIVEDIR/mkxp.conf"`
+    cp "$CURRENT_DIR"/resources/linux/mkxp.linux.json   "$APPDIR/$RELATIVEDIR/mkxp.json"
 
     if [ "$ARCH" == "i386" ]; then
         cp "$CURRENT_DIR"/engine/linux/mkxp-z.x86   "$APPDIR/$RELATIVEDIR/$EXECUTABLENAME".x86
@@ -154,5 +151,8 @@ function createAppImage() {
 }
 
 createAppImage "$ARCH"
+
+# Cleanup
+rm "$CURRENT_DIR/"game.sh.temp
 
 exit 0;
