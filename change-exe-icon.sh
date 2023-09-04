@@ -18,15 +18,18 @@ if [[ -f "$DATA_DIR"/game.ico ]]; then
     fi
 
     # Ensure the tool exists
-    if [[ ! -e "$CURRENT_DIR"/resource_hacker ]]; then
-        if [[ ! -e "$CURRENT_DIR"/resource_hacker.zip ]]; then
-            wget http://www.angusj.com/resourcehacker/resource_hacker.zip  -P "$CURRENT_DIR"/
+    if [[ ! -d "$CURRENT_DIR"/tool/resource_hacker ]]; then
+        if [[ ! -f "$CURRENT_DIR"/tool/resource_hacker.zip ]]; then
+            # download the archive
+            wget http://www.angusj.com/resourcehacker/resource_hacker.zip -P "$CURRENT_DIR"/tool
         fi
-        unzip "$CURRENT_DIR"/resource_hacker.zip -d "$CURRENT_DIR"/resource_hacker
-        if [[ ! -e "$CURRENT_DIR"/resource_hacker ]]; then
+        unzip "$CURRENT_DIR"/tool/resource_hacker.zip -d "$CURRENT_DIR"/tool/resource_hacker
+        if [[ ! -d "$CURRENT_DIR"/tool/resource_hacker ]]; then
             echo "resource hacker tool does not exist"
             exit 32;
         fi
+        # remove the archive
+        rm "$CURRENT_DIR"/tool/resource_hacker.zip
     fi
 
     #if [[ ! -e "$EXECUTABLE.bak" ]]; then
@@ -35,7 +38,7 @@ if [[ -f "$DATA_DIR"/game.ico ]]; then
 
     cp "$DATA_DIR/game.ico" "$DATA_DIR/1.ico"
 
-    wine resource_hacker/ResourceHacker.exe -open "$EXECUTABLE" -save "$EXECUTABLE" -log "$CURRENT_DIR"/resourcehacker.log -resource "$DATA_DIR/1.ico" -action addoverwrite -mask ICONGROUP,1,
+    wine tool/resource_hacker/ResourceHacker.exe -open "$EXECUTABLE" -save "$EXECUTABLE" -log "$CURRENT_DIR"/tool/resource_hacker/resourcehacker.log -resource "$DATA_DIR/1.ico" -action addoverwrite -mask ICONGROUP,1,
 
     rm "$DATA_DIR/1.ico"
 fi
