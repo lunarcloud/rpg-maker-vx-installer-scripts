@@ -39,7 +39,7 @@
     // If this fails, the version defaults to 1.
     // (default: 0)
     //
-    "rgssVersion": 3,
+    // "rgssVersion": 3,
 
 
     // Continuously print average FPS to console.
