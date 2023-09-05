@@ -9,6 +9,7 @@ else
     DATA_DIR="$1"
     PACKAGING="$2"
     OUTPUT_DIR="$3"
+    INCLUDE_ENHANCED="$4"
 fi
 if [ "$OUTPUT_DIR" == "" ]; then
     OUTPUT_DIR="."
@@ -16,9 +17,14 @@ fi
 if [ "$PACKAGING" != "folder" ] && [ "$PACKAGING" != "installer" ] && [ "$PACKAGING" != "both" ]; then
     PACKAGING="both"
 fi
+if [ "$INCLUDE_ENHANCED" == "no-enhanced" ] || [ "$INCLUDE_ENHANCED" == "omit-enhanced" ]; then
+    INCLUDE_ENHANCED=false
+else
+    INCLUDE_ENHANCED=true
+fi
 
 
-GAMEFOLDER=$(find "$DATA_DIR" ! -path "*_i386*" ! -path "*_amd64/*" ! -path "*.app*" ! -path "*.App*" ! -path "*flatpak/*" ! -path "*gamedir/*" -name 'Game.exe' -printf '%h\n' | sort -ur | tr -d '\n' | tr -d '\r')
+GAMEFOLDER=$(find "$DATA_DIR" ! -path "*_i386*" ! -path "*_amd64/*" ! -path "*.app*" ! -path "*.App*" ! -path "*flatpak/*" ! -path "*gamedir/*" ! -path "*outputs/*" -name 'Game.exe' -printf '%h\n' | sort -ur | tr -d '\n' | tr -d '\r')
 
 if [[ ! -d "$GAMEFOLDER" ]]; then
     echo "No game folder found inside \"$DATA_DIR\""
@@ -40,25 +46,32 @@ cp -ra "$GAMEFOLDER/."   "$OUTPUT_DIR/$NAME"
 
 # Update nsi file
 echo "Creating nsi file..."
-cp "$CURRENT_DIR"/resources/windows/game.nsi.template "$CURRENT_DIR"/game.nsi
-sed -i "s#define APP_DIR \"\(.*\)\"#define APP_DIR \"$(echo "$OUTPUT_DIR/$NAME" | sed -e 's/\./\\\./g')\"#"  "$CURRENT_DIR/game.nsi"
-sed -i "s/define PRODUCT_NAME \"\(.*\)\"/define PRODUCT_NAME \"$(echo "$NAME" | sed -e 's/\./\\\./g')\"/"  "$CURRENT_DIR/game.nsi"
-sed -i "s/define PRODUCT_VERSION \"\(.*\)\"/define PRODUCT_VERSION \"$(echo "$VERSION" | sed -e 's/\./\\\./g')\"/"  "$CURRENT_DIR/game.nsi"
-sed -i "s/define PRODUCT_PUBLISHER \"\(.*\)\"/define PRODUCT_PUBLISHER \"$(echo "$PUBLISHER" | sed -e 's/\./\\\./g')\"/"  "$CURRENT_DIR/game.nsi"
-sed -i "s/define PRODUCT_WEB_SITE \"\(.*\)\"/define PRODUCT_WEB_SITE \"$(echo "$WEB_SITE" | sed -e 's/\./\\\./g')\"/"  "$CURRENT_DIR/game.nsi"
-sed -i "s/define INSTALLER_FILE \"\(.*\)\"/define INSTALLER_FILE \"$(echo "$INSTALLER_FILE" | sed -e 's/\./\\\./g')\"/"  "$CURRENT_DIR/game.nsi"
+cp "$CURRENT_DIR"/resources/windows/game.nsi.template "$OUTPUT_DIR/game.nsi"
+sed -i "s#define APP_DIR \"\(.*\)\"#define APP_DIR \"$(echo "$OUTPUT_DIR/$NAME" | sed -e 's/\./\\\./g')\"#"  "$OUTPUT_DIR/game.nsi"
+sed -i "s/define PRODUCT_NAME \"\(.*\)\"/define PRODUCT_NAME \"$(echo "$NAME" | sed -e 's/\./\\\./g')\"/"  "$OUTPUT_DIR/game.nsi"
+sed -i "s/define PRODUCT_VERSION \"\(.*\)\"/define PRODUCT_VERSION \"$(echo "$VERSION" | sed -e 's/\./\\\./g')\"/"  "$OUTPUT_DIR/game.nsi"
+sed -i "s/define PRODUCT_PUBLISHER \"\(.*\)\"/define PRODUCT_PUBLISHER \"$(echo "$PUBLISHER" | sed -e 's/\./\\\./g')\"/"  "$OUTPUT_DIR/game.nsi"
+sed -i "s/define PRODUCT_WEB_SITE \"\(.*\)\"/define PRODUCT_WEB_SITE \"$(echo "$WEB_SITE" | sed -e 's/\./\\\./g')\"/"  "$OUTPUT_DIR/game.nsi"
+sed -i "s/define INSTALLER_FILE \"\(.*\)\"/define INSTALLER_FILE \"$(echo "$INSTALLER_FILE" | sed -e 's/\./\\\./g')\"/"  "$OUTPUT_DIR/game.nsi"
 
-if [ -f "$DATA_DIR"/installer.ico ]; then
-    sed -i "s#define MUI_ICON \"\(.*\)\"#define MUI_ICON \"$DATA_DIR/installer.ico\"#"  "$CURRENT_DIR/game.nsi"
-else
-    sed -i "s#define MUI_ICON \"\(.*\)\"#define MUI_ICON \"\$\{NSISDIR\}\\\\Contrib\\\\Graphics\\\\Icons\\\\modern-install.ico\"#"  "$CURRENT_DIR/game.nsi"
+if [ "$INCLUDE_ENHANCED" = true ]; then
+    # Remove the comments for ;enhanced-only line(s)
+    sed -i "s/;enhanced-only//"  "$OUTPUT_DIR/game.nsi"
 fi
 
-# Copy MKXP-Z Engine
-cp -ra "$CURRENT_DIR/engine/windows/."   "$OUTPUT_DIR/$NAME/"
+if [ -f "$DATA_DIR"/installer.ico ]; then
+    sed -i "s#define MUI_ICON \"\(.*\)\"#define MUI_ICON \"$DATA_DIR/installer.ico\"#"  "$OUTPUT_DIR/game.nsi"
+else
+    sed -i "s#define MUI_ICON \"\(.*\)\"#define MUI_ICON \"\$\{NSISDIR\}\\\\Contrib\\\\Graphics\\\\Icons\\\\modern-install.ico\"#"  "$OUTPUT_DIR/game.nsi"
+fi
 
-# Overwrite config
-cp "$CURRENT_DIR/resources/mkxp.json"   "$OUTPUT_DIR/$NAME/mkxp.json"
+if [ "$INCLUDE_ENHANCED" = true ]; then
+    # Copy MKXP-Z Engine, config, itch manifest
+    cp -ra "$CURRENT_DIR/engine/windows/."   "$OUTPUT_DIR/$NAME/"
+    cp "$CURRENT_DIR/resources/mkxp.json"   "$OUTPUT_DIR/$NAME/"
+    cp "$CURRENT_DIR/resources/windows/.itch.toml"   "$OUTPUT_DIR/$NAME/"
+    mv "$OUTPUT_DIR/$NAME/mkxp-z.exe" "$OUTPUT_DIR/$NAME/Game-Enhanced.exe"
+fi
 
 function changeExeIcon() {
     EXECUTABLE=$1
@@ -80,11 +93,11 @@ function changeExeIcon() {
         rm "$CURRENT_DIR"/resources/tool/resource_hacker.zip
     fi
 
-    cp "$DATA_DIR/game.ico" "$DATA_DIR/1.ico"
+    cp "$DATA_DIR/game.ico" "$OUTPUT_DIR/1.ico"
 
-    wine "$CURRENT_DIR"/resources/tool/resource_hacker/ResourceHacker.exe -open "$EXECUTABLE" -save "$EXECUTABLE" -log "$CURRENT_DIR"/resources/tool/resource_hacker/resourcehacker.log -resource "$DATA_DIR/1.ico" -action addoverwrite -mask ICONGROUP,1,
+    wine "$CURRENT_DIR"/resources/tool/resource_hacker/ResourceHacker.exe -open "$EXECUTABLE" -save "$EXECUTABLE" -log "$CURRENT_DIR"/resources/tool/resource_hacker/resourcehacker.log -resource "$OUTPUT_DIR/1.ico" -action addoverwrite -mask ICONGROUP,1,
 
-    rm "$DATA_DIR/1.ico"
+    rm "$OUTPUT_DIR/1.ico"
 }
 
 # Add icon for mkxp to use
@@ -103,15 +116,18 @@ if [[ -f "$DATA_DIR"/game.ico ]]; then
 
     # Update the Main's icon
     changeExeIcon "$EXECUTABLE"
-    changeExeIcon "$OUTPUT_DIR/$NAME/mkxp-z.exe"
+    if [ "$INCLUDE_ENHANCED" = true ]; then
+        changeExeIcon "$OUTPUT_DIR/$NAME/Game-Enhanced.exe"
+    fi
 fi
 
 # If "installer" or "both"
 if [ "$PACKAGING" != "folder" ]; then
     # Build the installer
-    cd "$CURRENT_DIR"
-    makensis "$CURRENT_DIR/game.nsi"
-    mv "$INSTALLER_FILE" "$OUTPUT_DIR/"
+    cd "$OUTPUT_DIR"
+    makensis "$OUTPUT_DIR/game.nsi"
+    #cleanup
+    rm "$OUTPUT_DIR/game.nsi"
 fi
 
 # If not "folder" or "both"
@@ -121,4 +137,4 @@ if [ "$PACKAGING" == "installer" ]; then
 fi
 
 # clean up
-rm "$CURRENT_DIR/game.nsi"
+rm "$OUTPUT_DIR/game.nsi"

@@ -1,0 +1,8 @@
+
+[[actions]]
+name = "Play Original"
+path = "Game.exe"
+
+[[actions]]
+name = "Play Enhanced"
+path = "Game-Enhanced.exe"
