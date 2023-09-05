@@ -9,7 +9,7 @@ else
     DATA_DIR="$1"
     PACKAGING="$2"
     OUTPUT_DIR="$3"
-    INCLUDE_ENHANCED="$4"
+    USE_ENGINE="$4"
 fi
 if [ "$OUTPUT_DIR" == "" ]; then
     OUTPUT_DIR="."
@@ -17,10 +17,8 @@ fi
 if [ "$PACKAGING" != "folder" ] && [ "$PACKAGING" != "installer" ] && [ "$PACKAGING" != "both" ]; then
     PACKAGING="both"
 fi
-if [ "$INCLUDE_ENHANCED" == "no-enhanced" ] || [ "$INCLUDE_ENHANCED" == "omit-enhanced" ]; then
-    INCLUDE_ENHANCED=false
-else
-    INCLUDE_ENHANCED=true
+if [ "$USE_ENGINE" != "enhanced" ] && [ "$USE_ENGINE" != "classic" ] && [ "$USE_ENGINE" != "both" ]; then
+    USE_ENGINE="both"
 fi
 
 
@@ -54,10 +52,6 @@ sed -i "s/define PRODUCT_PUBLISHER \"\(.*\)\"/define PRODUCT_PUBLISHER \"$(echo 
 sed -i "s/define PRODUCT_WEB_SITE \"\(.*\)\"/define PRODUCT_WEB_SITE \"$(echo "$WEB_SITE" | sed -e 's/\./\\\./g')\"/"  "$OUTPUT_DIR/game.nsi"
 sed -i "s/define INSTALLER_FILE \"\(.*\)\"/define INSTALLER_FILE \"$(echo "$INSTALLER_FILE" | sed -e 's/\./\\\./g')\"/"  "$OUTPUT_DIR/game.nsi"
 
-if [ "$INCLUDE_ENHANCED" = true ]; then
-    # Remove the comments for ;enhanced-only line(s)
-    sed -i "s/;enhanced-only//"  "$OUTPUT_DIR/game.nsi"
-fi
 
 if [ -f "$DATA_DIR"/installer.ico ]; then
     sed -i "s#define MUI_ICON \"\(.*\)\"#define MUI_ICON \"$DATA_DIR/installer.ico\"#"  "$OUTPUT_DIR/game.nsi"
@@ -65,12 +59,23 @@ else
     sed -i "s#define MUI_ICON \"\(.*\)\"#define MUI_ICON \"\$\{NSISDIR\}\\\\Contrib\\\\Graphics\\\\Icons\\\\modern-install.ico\"#"  "$OUTPUT_DIR/game.nsi"
 fi
 
-if [ "$INCLUDE_ENHANCED" = true ]; then
+if [ "$USE_ENGINE" == "both" ] || [ "$USE_ENGINE" == "enhanced" ]; then
     # Copy MKXP-Z Engine, config, itch manifest
     cp -ra "$CURRENT_DIR/engine/windows/."   "$OUTPUT_DIR/$NAME/"
     cp "$CURRENT_DIR/resources/mkxp.json"   "$OUTPUT_DIR/$NAME/"
-    cp "$CURRENT_DIR/resources/windows/.itch.toml"   "$OUTPUT_DIR/$NAME/"
     mv "$OUTPUT_DIR/$NAME/mkxp-z.exe" "$OUTPUT_DIR/$NAME/Game-Enhanced.exe"
+fi
+
+if [ "$USE_ENGINE" == "both" ]; then
+    # Add itch manifest to allow launching either from the itch app
+    cp "$CURRENT_DIR/resources/windows/.itch.toml"   "$OUTPUT_DIR/$NAME/"
+    # Remove the comments for ;enhanced-only line(s)
+    sed -i "s/;enhanced-only//"  "$OUTPUT_DIR/game.nsi"
+fi
+
+if [ "$USE_ENGINE" == "enhanced" ]; then
+    rm "$OUTPUT_DIR/$NAME/Game.exe"
+    mv "$OUTPUT_DIR/$NAME/Game-Enhanced.exe" "$OUTPUT_DIR/$NAME/Game.exe"
 fi
 
 function changeExeIcon() {
@@ -107,16 +112,10 @@ fi
 
 # Update Exe Icons
 if [[ -f "$DATA_DIR"/game.ico ]]; then
-    EXECUTABLE=$(find "$OUTPUT_DIR/$NAME" ! -path "*_i386*" ! -path "*_amd64/*" ! -path "*.app*" -name 'Game.exe' -printf '%p')
-
-    if [[ ! -e "$EXECUTABLE" ]]; then
-        echo "No game executable found inside \"$DATA_DIR\""
-        return
-    fi
-
     # Update the Main's icon
-    changeExeIcon "$EXECUTABLE"
-    if [ "$INCLUDE_ENHANCED" = true ]; then
+    changeExeIcon "$OUTPUT_DIR/$NAME/Game.exe"
+
+    if [ "$USE_ENGINE" == "both" ]; then
         changeExeIcon "$OUTPUT_DIR/$NAME/Game-Enhanced.exe"
     fi
 fi
