@@ -26,15 +26,19 @@ if [[ $# -eq 0 ]] ; then
 else
     DATA_DIR="$1"
     ARCH="$2"
+    OUTPUT_DIR="$3"
 fi
 
+if [ "$OUTPUT_DIR" == "" ]; then
+    OUTPUT_DIR="."
+fi
 # There only seems to be 64bit support right now anyway
-if [ "$ARCH" == "" ]; then
+if [ "$ARCH" == "" ] || [ "$ARCH" == "64" ] || [ "$ARCH" == "amd64" ]; then
     ARCH="x86_64"
 fi
 
 # Get Variables
-GAMEFOLDER=$(find "$DATA_DIR" ! -path "*_i386*" ! -path "*_amd64/*" ! -path "*.app*" ! -path "*.App*" ! -path "*flatpak/*" ! -path "*gamedir/*" -name 'Game.exe' -printf '%h\n' | sort -ur | tr -d '\n' | tr -d '\r')
+GAMEFOLDER=$(find "$DATA_DIR" ! -path "*_i386*" ! -path "*_amd64/*" ! -path "*.app*" ! -path "*.App*" ! -path "*flatpak/*" ! -path "*gamedir/*" ! -path "*outputs/*" -name 'Game.exe' -printf '%h\n' | sort -ur | tr -d '\n' | tr -d '\r')
 
 if [[ ! -d "$GAMEFOLDER" ]]; then
     echo "No game folder found inside \"$DATA_DIR\""
@@ -76,11 +80,11 @@ function createAppImage() {
     echo "creating app image ($ARCH)"
 
     if [ "$ARCH" == "x86_64" ]; then
-        APPDIR="$CURRENT_DIR/$TITLE_UNDERSCORE.AppDir"
-        APPIMAGE="$CURRENT_DIR/$TITLE_UNDERSCORE.AppImage"
+        APPDIR="$OUTPUT_DIR/$TITLE_UNDERSCORE.AppDir"
+        APPIMAGE="$OUTPUT_DIR/$TITLE_UNDERSCORE.AppImage"
     else
-        APPDIR="$CURRENT_DIR/$TITLE_UNDERSCORE-$ARCH.AppDir"
-        APPIMAGE="$CURRENT_DIR/$TITLE_UNDERSCORE-$ARCH.AppImage"
+        APPDIR="$OUTPUT_DIR/$TITLE_UNDERSCORE-$ARCH.AppDir"
+        APPIMAGE="$OUTPUT_DIR/$TITLE_UNDERSCORE-$ARCH.AppImage"
     fi
 
     # Setup Folder
@@ -103,7 +107,7 @@ function createAppImage() {
     # Populating fakeroot...
     cp -r "$GAMEFOLDER"/* 				"$APPDIR/$RELATIVEDIR/"
     cp "$CURRENT_DIR"/game.sh.temp      "$APPDIR/$RELATIVEDIR/game.sh"
-    cp "$CURRENT_DIR"/resources/linux/mkxp.linux.json   "$APPDIR/$RELATIVEDIR/mkxp.json"
+    cp "$CURRENT_DIR"/resources/mkxp.json   "$APPDIR/$RELATIVEDIR/mkxp.json"
 
     if [ "$ARCH" == "i386" ]; then
         cp "$CURRENT_DIR"/engine/linux/mkxp-z.x86   "$APPDIR/$RELATIVEDIR/$EXECUTABLENAME".x86
@@ -128,7 +132,8 @@ function createAppImage() {
     # Icons
 
     ## Native Size
-		cp "$DATA_DIR"/game.png "$APPDIR/$RELATIVEDIR/"$ID.png
+		cp "$DATA_DIR"/game.png "$APPDIR/$RELATIVEDIR/$ID.png"
+		cp "$DATA_DIR"/game.png "$APPDIR/$RELATIVEDIR/game.png"
     cp "$DATA_DIR"/game.png "$APPDIR/$ID.png"
     mkdir -p "$APPDIR/usr/share/pixmaps"
     cp "$DATA_DIR"/game.png "$APPDIR/usr/share/pixmaps/$ID.png"
