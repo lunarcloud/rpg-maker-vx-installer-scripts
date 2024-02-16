@@ -34,7 +34,6 @@ BASE_APP="$CURRENT_DIR/engine/macos/mkxp.app"
 if [[ ! -d "$BASE_APP" ]]; then
     echo "Please download 'mkxp' macos and extract mkxp.app into $CURRENT_DIR/engine/macos/"
     mkdir -p "$CURRENT_DIR/engine/macos/"
-    exit 32;
 fi
 
 # Ensure we have the MKXP[-Z] build
