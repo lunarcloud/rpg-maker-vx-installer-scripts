@@ -141,7 +141,7 @@ if [ "$PACKAGING" != "folder" ]; then
 fi
 
 # Cleanup temp ico (was used by installer)
-if [ -f "$DATA_DIR"/game.ico ]; then
+if [ -f "$OUTPUT_DIR"/game.ico ]; then
     rm "$OUTPUT_DIR/game.ico"
 fi
 
