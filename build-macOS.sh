@@ -153,7 +153,7 @@ if [ "$PACKAGING" == "zip" ] || [ "$PACKAGING" == "both" ]; then
     if [ -f "$OUTPUT_DIR/$ZIP_NAME" ]; then
         rm -r "$OUTPUT_DIR/$ZIP_NAME"
     fi
-    zip -rq "$OUTPUT_DIR/$ZIP_NAME" "$OUTPUT_DIR/$BUNDLE_NAME".app
+    (cd "$OUTPUT_DIR" && zip -rq "$OUTPUT_DIR/$ZIP_NAME" "$BUNDLE_NAME".app)
     if [ -f $DATA_DIR/license.txt ]; then
         zip -ujq "$OUTPUT_DIR/$ZIP_NAME" "$DATA_DIR"/license.txt
     fi
