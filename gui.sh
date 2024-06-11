@@ -1,16 +1,12 @@
 #!/bin/bash
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# shellcheck source=./script-dialog.sh
 source "$CURRENT_DIR"/script-dialog/script-dialog.sh #folder local version
 
-relaunchIfNotVisible
+relaunch-if-not-visible
 
 APP_NAME="Test Script"
-if [[ -e "$CURRENT_DIR/game.png" ]]; then
-  WINDOW_ICON="$CURRENT_DIR/game.png"
-else
-  WINDOW_ICON="$CURRENT_DIR/game.png.example"
-fi
-
 
 if [[ $# -eq 0 ]] ; then
   ACTIVITY="Data Directory Discovery"
@@ -31,7 +27,7 @@ fi
 GAMEFOLDER=$(find "$DATA_DIR" ! -path "*_i386*" ! -path "*_amd64/*" ! -path "*.app*" ! -path "*.App*" -name 'Game.exe' -printf '%h\n' | sort -ur | tr -d '\n' | tr -d '\r')
 
 if [[ ! -d "$GAMEFOLDER" ]]; then
-    messagebox "No game folder found inside \"$DATA_DIR\""
+    message-error "No game folder found inside \"$DATA_DIR\""
     exit 31;
 fi
 
@@ -86,4 +82,4 @@ ACTIVITY="Building ${#ANSWER[*]} items..."
   progressbar_finish
 } | progressbar
 
-messagebox "Finished building."
+message-info "Finished building."
