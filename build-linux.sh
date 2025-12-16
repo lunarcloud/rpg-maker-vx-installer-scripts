@@ -13,10 +13,10 @@ APPIMAGETOOL="appimagetool-x86_64.AppImage"
 
 if [[ ! -e "$CURRENT_DIR/resources/tool/$APPIMAGETOOL" ]]; then
     mkdir -p "$CURRENT_DIR/tool"
-    cd "$CURRENT_DIR/tool"
+    cd "$CURRENT_DIR/tool" || exit 1
     curl -O -J -L https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -o "$APPIMAGETOOL"
     superuser chmod +x "$APPIMAGETOOL"
-    cd "$CURRENT_DIR"
+    cd "$CURRENT_DIR" || exit 1
 fi
 APPIMAGETOOL="$CURRENT_DIR/resources/tool/$APPIMAGETOOL"
 
@@ -46,25 +46,34 @@ if [[ ! -d "$GAMEFOLDER" ]]; then
 fi
 
 TITLE_UPPER=$(grep 'Title' "$GAMEFOLDER"/Game.ini | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
-TITLE_UNDERSCORE=$(echo $TITLE_UPPER  | sed -e 's/ /_/g' | sed -e 's/\.//g')
-TITLE_DASH=$(echo $TITLE_UPPER  | sed -e 's/ /-/g' | sed -e 's/\.//g')
-TITLE_LOWER=$(echo $TITLE_UPPER  | tr '[:upper:]' '[:lower:]')
-TITLE_LOWER_UNDERSCORE=$(echo $TITLE_LOWER  | sed -e 's/ /_/g' | sed -e 's/\.//g')
-TITLE_LOWER_DASH=$(echo $TITLE_LOWER  | sed -e 's/ /-/g' | sed -e 's/\.//g')
+TITLE_UNDERSCORE=$(echo "$TITLE_UPPER"  | sed -e 's/ /_/g' | sed -e 's/\.//g')
+# shellcheck disable=SC2034  # May be used by other build scripts or future features
+TITLE_DASH=$(echo "$TITLE_UPPER"  | sed -e 's/ /-/g' | sed -e 's/\.//g')
+TITLE_LOWER=$(echo "$TITLE_UPPER"  | tr '[:upper:]' '[:lower:]')
+# shellcheck disable=SC2034  # May be used by other build scripts or future features
+TITLE_LOWER_UNDERSCORE=$(echo "$TITLE_LOWER"  | sed -e 's/ /_/g' | sed -e 's/\.//g')
+TITLE_LOWER_DASH=$(echo "$TITLE_LOWER"  | sed -e 's/ /-/g' | sed -e 's/\.//g')
 
-COMPANY_UPPER=$(grep 'Company' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2- | tr -d '\n' | tr -d '\r')
-COMPANY_UNDERSCORE=$(echo $COMPANY_UPPER  | sed -e 's/ /_/g')
-COMPANY_DASH=$(echo $COMPANY_UPPER  | sed -e 's/ /-/g')
-COMPANY_LOWER=$(echo $COMPANY_UPPER  | tr '[:upper:]' '[:lower:]')
-COMPANY_LOWER_UNDERSCORE=$(echo $COMPANY_LOWER  | sed -e 's/ /_/g')
-COMPANY_LOWER_DASH=$(echo $COMPANY_LOWER  | sed -e 's/ /-/g')
+COMPANY_UPPER=$(grep 'Company' "$DATA_DIR"/gameinfo.conf | cut -d'=' -f 2- | tr -d '\n' | tr -d '\r')
+# shellcheck disable=SC2034  # May be used by other build scripts or future features
+COMPANY_UNDERSCORE=${COMPANY_UPPER// /_}
+# shellcheck disable=SC2034  # May be used by other build scripts or future features
+COMPANY_DASH=${COMPANY_UPPER// /-}
+COMPANY_LOWER=$(echo "$COMPANY_UPPER"  | tr '[:upper:]' '[:lower:]')
+# shellcheck disable=SC2034  # May be used by other build scripts or future features
+COMPANY_LOWER_UNDERSCORE=${COMPANY_LOWER// /_}
+COMPANY_LOWER_DASH=${COMPANY_LOWER// /-}
 
-ID=$(grep 'Id' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r' | tr -d '[:space:]')
-VERSION=$(grep 'Version' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
-SHORT_DESCRIPTION=$(grep 'Description' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
-DESCRIPTION=$(sed -n '/Description/,$p' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2- | sed ':a;N;$!ba;s/\n/\\n/g;s/	/ /g')
-MAINTANER=$(grep 'Maintainer' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
-HOMEPAGE=$(grep 'Homepage' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
+ID=$(grep 'Id' "$DATA_DIR"/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r' | tr -d '[:space:]')
+# shellcheck disable=SC2034  # May be used by other build scripts or future features
+VERSION=$(grep 'Version' "$DATA_DIR"/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
+SHORT_DESCRIPTION=$(grep 'Description' "$DATA_DIR"/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
+# shellcheck disable=SC2034  # May be used by other build scripts or future features
+DESCRIPTION=$(sed -n '/Description/,$p' "$DATA_DIR"/gameinfo.conf | cut -d'=' -f 2- | sed ':a;N;$!ba;s/\n/\\n/g;s/	/ /g')
+# shellcheck disable=SC2034  # May be used by other build scripts or future features
+MAINTANER=$(grep 'Maintainer' "$DATA_DIR"/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
+# shellcheck disable=SC2034  # May be used by other build scripts or future features
+HOMEPAGE=$(grep 'Homepage' "$DATA_DIR"/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
 
 PACKAGENAME="$COMPANY_LOWER_DASH"-"$TITLE_LOWER_DASH"
 RELATIVEDIR="/opt/$PACKAGENAME"
@@ -73,7 +82,7 @@ EXECUTABLENAME="$TITLE_LOWER_DASH"
 # Create game launcher script
 echo "Creating game launcher script..."
 cp "$CURRENT_DIR/resources/linux/game.sh" "$CURRENT_DIR/"game.sh.temp
-`sed -i "s|APPDIR=\(.*\)|APPDIR=\\$HOME/.local/share/$PACKAGENAME/|" "$CURRENT_DIR/"game.sh.temp`
+sed -i "s|APPDIR=\(.*\)|APPDIR=\\$HOME/.local/share/$PACKAGENAME/|" "$CURRENT_DIR/"game.sh.temp
 
 function createAppImage() {
     ARCH=$1
@@ -88,21 +97,21 @@ function createAppImage() {
     fi
 
     # Setup Folder
-    rm -r "$APPDIR/$RELATIVEDIR"
+    rm -r "${APPDIR:?}/$RELATIVEDIR"
     mkdir -p "$APPDIR/$RELATIVEDIR"
 
     cp "$CURRENT_DIR/resources/linux/AppRun" "$APPDIR/"
-    `sed -i "s|GAME_DIR=\(.*\)|GAME_DIR=\"$RELATIVEDIR\"|" "$APPDIR/AppRun"`
-    `sed -i "s|GAME_EXEC=\(.*\)|GAME_EXEC=\"game.sh\"|" "$APPDIR/AppRun"`
+    sed -i "s|GAME_DIR=\(.*\)|GAME_DIR=\"$RELATIVEDIR\"|" "$APPDIR/AppRun"
+    sed -i "s|GAME_EXEC=\(.*\)|GAME_EXEC=\"game.sh\"|" "$APPDIR/AppRun"
 
     # Creating desktop file...
     DESKTOP_FILE="$APPDIR/$ID.desktop"
     cp "$CURRENT_DIR/resources/linux/app.desktop" "$DESKTOP_FILE"
-    `sed -i "s|Name=\(.*\)|Name=$TITLE_UPPER|" "$DESKTOP_FILE"`
-    `sed -i "s|Comment=\(.*\)|Comment=$( echo "$SHORT_DESCRIPTION" | sed -e 's/\./\\\./g')|" "$DESKTOP_FILE"`
-    `sed -i "s/Exec=\(.*\)/Exec=\"\/opt\/"$PACKAGENAME"\/game.sh\"/" "$DESKTOP_FILE"`
-    `sed -i "s|Icon=\(.*\)|Icon=\/opt\/"$PACKAGENAME"\/$(echo "$ID" | sed -e 's/\./\\\./g')|"  "$DESKTOP_FILE"`
-    `sed -i "s|Path=\(.*\)|Path=\/opt\/"$PACKAGENAME"\/|"  "$DESKTOP_FILE"`
+    sed -i "s|Name=\(.*\)|Name=$TITLE_UPPER|" "$DESKTOP_FILE"
+    sed -i "s|Comment=\(.*\)|Comment=${SHORT_DESCRIPTION//./\\.}|" "$DESKTOP_FILE"
+    sed -i "s/Exec=\(.*\)/Exec=\"\/opt\/${PACKAGENAME}\/game.sh\"/" "$DESKTOP_FILE"
+    sed -i "s|Icon=\(.*\)|Icon=\/opt\/${PACKAGENAME}\/${ID//./\\.}|"  "$DESKTOP_FILE"
+    sed -i "s|Path=\(.*\)|Path=\/opt\/${PACKAGENAME}\/|"  "$DESKTOP_FILE"
 
     # Populating fakeroot...
     cp -r "$GAMEFOLDER"/* 				"$APPDIR/$RELATIVEDIR/"
@@ -143,14 +152,12 @@ function createAppImage() {
     for SIZE in "${SIZES[@]}"; do
         ICONDIR="$APPDIR/usr/share/icons/hicolor/${SIZE}x${SIZE}/apps/"
         mkdir -p "$ICONDIR"
-        convert "$DATA_DIR"/game.png -resize ${SIZE}x${SIZE} "$ICONDIR/$ID.png"
+        convert "$DATA_DIR"/game.png -resize "${SIZE}x${SIZE}" "$ICONDIR/$ID.png"
     done
 
-    rm $APPIMAGE # delete previous
-    ARCH=$ARCH "$APPIMAGETOOL" -n "$APPDIR" "$APPIMAGE"
-
-    # Cleanup if nothing to debug
-    if [ $? -eq 0 ]; then
+    rm "$APPIMAGE" # delete previous
+    if ARCH=$ARCH "$APPIMAGETOOL" -n "$APPDIR" "$APPIMAGE"; then
+        # Cleanup if nothing to debug
         rm -r "$APPDIR"
     fi
 }
