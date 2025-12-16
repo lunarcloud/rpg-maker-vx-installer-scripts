@@ -39,14 +39,14 @@ if [[ ! -d "$GAMEFOLDER" ]]; then
 fi
 
 NAME=$(grep 'Title' "$GAMEFOLDER"/Game.ini | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
-VERSION=$(grep 'Version' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
-PUBLISHER=$(grep 'Company' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2- | tr -d '\n' | tr -d '\r')
-WEB_SITE=$(grep 'Homepage' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
+VERSION=$(grep 'Version' "$DATA_DIR"/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
+PUBLISHER=$(grep 'Company' "$DATA_DIR"/gameinfo.conf | cut -d'=' -f 2- | tr -d '\n' | tr -d '\r')
+WEB_SITE=$(grep 'Homepage' "$DATA_DIR"/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
 INSTALLER_FILE="Install $NAME $VERSION.exe"
 
 # Copy Original Game folder to the output one
 if [[ -d "$OUTPUT_DIR/$NAME" ]]; then
-    rm -r "$OUTPUT_DIR/$NAME"
+    rm -r "${OUTPUT_DIR:?}/$NAME"
 fi
 mkdir -p "$OUTPUT_DIR/$NAME"
 cp -ra "$GAMEFOLDER/."   "$OUTPUT_DIR/$NAME"
@@ -55,11 +55,11 @@ cp -ra "$GAMEFOLDER/."   "$OUTPUT_DIR/$NAME"
 echo "Creating nsi file..."
 cp "$CURRENT_DIR"/resources/windows/game.nsi.template "$OUTPUT_DIR/game.nsi"
 sed -i "s#define APP_DIR \"\(.*\)\"#define APP_DIR \"$(echo "$OUTPUT_DIR/$NAME" | sed -e 's/\./\\\./g')\"#"  "$OUTPUT_DIR/game.nsi"
-sed -i "s/define PRODUCT_NAME \"\(.*\)\"/define PRODUCT_NAME \"$(echo "$NAME" | sed -e 's/\./\\\./g')\"/"  "$OUTPUT_DIR/game.nsi"
-sed -i "s/define PRODUCT_VERSION \"\(.*\)\"/define PRODUCT_VERSION \"$(echo "$VERSION" | sed -e 's/\./\\\./g')\"/"  "$OUTPUT_DIR/game.nsi"
-sed -i "s/define PRODUCT_PUBLISHER \"\(.*\)\"/define PRODUCT_PUBLISHER \"$(echo "$PUBLISHER" | sed -e 's/\./\\\./g')\"/"  "$OUTPUT_DIR/game.nsi"
-sed -i "s/define PRODUCT_WEB_SITE \"\(.*\)\"/define PRODUCT_WEB_SITE \"$(echo "$WEB_SITE" | sed -e 's/\./\\\./g')\"/"  "$OUTPUT_DIR/game.nsi"
-sed -i "s/define INSTALLER_FILE \"\(.*\)\"/define INSTALLER_FILE \"$(echo "$INSTALLER_FILE" | sed -e 's/\./\\\./g')\"/"  "$OUTPUT_DIR/game.nsi"
+sed -i "s/define PRODUCT_NAME \"\(.*\)\"/define PRODUCT_NAME \"${NAME//./\\.}\"/"  "$OUTPUT_DIR/game.nsi"
+sed -i "s/define PRODUCT_VERSION \"\(.*\)\"/define PRODUCT_VERSION \"${VERSION//./\\.}\"/"  "$OUTPUT_DIR/game.nsi"
+sed -i "s/define PRODUCT_PUBLISHER \"\(.*\)\"/define PRODUCT_PUBLISHER \"${PUBLISHER//./\\.}\"/"  "$OUTPUT_DIR/game.nsi"
+sed -i "s/define PRODUCT_WEB_SITE \"\(.*\)\"/define PRODUCT_WEB_SITE \"${WEB_SITE//./\\.}\"/"  "$OUTPUT_DIR/game.nsi"
+sed -i "s/define INSTALLER_FILE \"\(.*\)\"/define INSTALLER_FILE \"${INSTALLER_FILE//./\\.}\"/"  "$OUTPUT_DIR/game.nsi"
 
 
 if [ "$USE_ENGINE" == "both" ] || [ "$USE_ENGINE" == "enhanced" ]; then
@@ -134,7 +134,7 @@ fi
 # If "installer" or "both"
 if [ "$PACKAGING" != "folder" ]; then
     # Build the installer
-    cd "$OUTPUT_DIR"
+    cd "$OUTPUT_DIR" || exit 1
     makensis "$OUTPUT_DIR/game.nsi"
     #cleanup
     rm "$OUTPUT_DIR/game.nsi"
@@ -148,6 +148,6 @@ fi
 # If not "folder" or "both"
 if [ "$PACKAGING" == "installer" ]; then
     # Remove the folder
-    rm -r "$OUTPUT_DIR/$NAME"
+    rm -r "${OUTPUT_DIR:?}/$NAME"
 fi
 

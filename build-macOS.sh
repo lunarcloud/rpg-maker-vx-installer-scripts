@@ -26,7 +26,7 @@ if [[ ! -d "$GAMEFOLDER" ]]; then
 fi
 
 BUNDLE_NAME=$(grep 'Title' "$GAMEFOLDER"/Game.ini | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
-ID=$(grep 'Id' $DATA_DIR/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r' | tr -d '[:space:]')
+ID=$(grep 'Id' "$DATA_DIR"/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r' | tr -d '[:space:]')
 VERSION=$(grep 'Version' "$DATA_DIR"/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
 
 
@@ -102,6 +102,7 @@ SAW_VERSIONLINE=false
 LINE_NUM=0
 
 #Update Name in PFList
+# shellcheck disable=SC2094  # sed -i uses a temp file, so reading and writing to same file is safe
 while IFS= read -r line
 do
 	((LINE_NUM++))
@@ -150,11 +151,11 @@ if [ "$PACKAGING" == "zip" ] || [ "$PACKAGING" == "both" ]; then
     # create zip of the bundle
     ZIP_NAME="$BUNDLE_NAME $VERSION macOS.zip"
 
-    if [ -f "$OUTPUT_DIR/$ZIP_NAME" ]; then
-        rm -r "$OUTPUT_DIR/$ZIP_NAME"
+    if [ -f "${OUTPUT_DIR:?}/$ZIP_NAME" ]; then
+        rm -r "${OUTPUT_DIR:?}/$ZIP_NAME"
     fi
     (cd "$OUTPUT_DIR" && zip -rq "$OUTPUT_DIR/$ZIP_NAME" "$BUNDLE_NAME".app)
-    if [ -f $DATA_DIR/license.txt ]; then
+    if [ -f "$DATA_DIR"/license.txt ]; then
         zip -ujq "$OUTPUT_DIR/$ZIP_NAME" "$DATA_DIR"/license.txt
     fi
 fi
@@ -163,17 +164,17 @@ if [ "$PACKAGING" == "dmg" ] || [ "$PACKAGING" == "both" ]; then
     # create dmg for the bundle
 
     mv "$OUTPUT_DIR/$BUNDLE_NAME".app "$CURRENT_DIR/resources/macos/dmg-contents/$BUNDLE_NAME.app"
-    png2icns "$CURRENT_DIR/dmg-contents/.VolumeIcon.icns" "$DATA_DIR/game.png"
-    if [ -f $DATA_DIR/license.txt ]; then
-        cp "$DATA_DIR"/license.txt "$CURRENT_DIR/"dmg-contents/
+    png2icns "$CURRENT_DIR/resources/macos/dmg-contents/.VolumeIcon.icns" "$DATA_DIR/game.png"
+    if [ -f "$DATA_DIR"/license.txt ]; then
+        cp "$DATA_DIR"/license.txt "$CURRENT_DIR/resources/macos/dmg-contents/"
     fi
 
-    genisoimage -V "$BUNDLE_NAME" -D -R -apple -no-pad -o "$OUTPUT_DIR/$BUNDLE_NAME $VERSION.dmg" "$CURRENT_DIR/"dmg-contents
+    genisoimage -V "$BUNDLE_NAME" -D -R -apple -no-pad -o "$OUTPUT_DIR/$BUNDLE_NAME $VERSION.dmg" "$CURRENT_DIR/resources/macos/dmg-contents"
 
     # clean up
-    rm "$CURRENT_DIR/"dmg-contents/.VolumeIcon.icns
-    rm "$CURRENT_DIR/"dmg-contents/license.txt
-    rm -r "$CURRENT_DIR/"dmg-contents/"$BUNDLE_NAME".app
+    rm "$CURRENT_DIR/resources/macos/dmg-contents/.VolumeIcon.icns"
+    rm "$CURRENT_DIR/resources/macos/dmg-contents/license.txt"
+    rm -r "$CURRENT_DIR/resources/macos/dmg-contents/$BUNDLE_NAME.app"
 fi
 
 if [ "$PACKAGING" == "zip" ]; then
