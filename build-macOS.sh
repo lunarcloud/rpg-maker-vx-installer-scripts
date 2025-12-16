@@ -164,16 +164,16 @@ if [ "$PACKAGING" == "dmg" ] || [ "$PACKAGING" == "both" ]; then
     # create dmg for the bundle
 
     mv "$OUTPUT_DIR/$BUNDLE_NAME".app "$CURRENT_DIR/resources/macos/dmg-contents/$BUNDLE_NAME.app"
-    png2icns "$CURRENT_DIR/dmg-contents/.VolumeIcon.icns" "$DATA_DIR/game.png"
+    png2icns "$CURRENT_DIR/resources/macos/dmg-contents/.VolumeIcon.icns" "$DATA_DIR/game.png"
     if [ -f "$DATA_DIR"/license.txt ]; then
-        cp "$DATA_DIR"/license.txt "$CURRENT_DIR/"dmg-contents/
+        cp "$DATA_DIR"/license.txt "$CURRENT_DIR/resources/macos/dmg-contents/"
     fi
 
-    genisoimage -V "$BUNDLE_NAME" -D -R -apple -no-pad -o "$OUTPUT_DIR/$BUNDLE_NAME $VERSION.dmg" "$CURRENT_DIR/"dmg-contents
+    genisoimage -V "$BUNDLE_NAME" -D -R -apple -no-pad -o "$OUTPUT_DIR/$BUNDLE_NAME $VERSION.dmg" "$CURRENT_DIR/resources/macos/dmg-contents"
 
     # clean up
-    rm "$CURRENT_DIR/"dmg-contents/.VolumeIcon.icns
-    rm "$CURRENT_DIR/"dmg-contents/license.txt
+    rm "$CURRENT_DIR/resources/macos/dmg-contents/.VolumeIcon.icns"
+    rm "$CURRENT_DIR/resources/macos/dmg-contents/license.txt"
     rm -r "$CURRENT_DIR/resources/macos/dmg-contents/$BUNDLE_NAME.app"
 fi
 

@@ -71,7 +71,7 @@ SHORT_DESCRIPTION=$(grep 'Description' "$DATA_DIR"/gameinfo.conf | cut -d'=' -f 
 # shellcheck disable=SC2034  # May be used by other build scripts or future features
 DESCRIPTION=$(sed -n '/Description/,$p' "$DATA_DIR"/gameinfo.conf | cut -d'=' -f 2- | sed ':a;N;$!ba;s/\n/\\n/g;s/	/ /g')
 # shellcheck disable=SC2034  # May be used by other build scripts or future features
-MAINTANER=$(grep 'Maintainer' "$DATA_DIR"/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
+MAINTAINER=$(grep 'Maintainer' "$DATA_DIR"/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
 # shellcheck disable=SC2034  # May be used by other build scripts or future features
 HOMEPAGE=$(grep 'Homepage' "$DATA_DIR"/gameinfo.conf | cut -d'=' -f 2 | tr -d '\n' | tr -d '\r')
 
