@@ -108,12 +108,15 @@ ACTIVITY="Building for ${#PLATFORMS[*]} platform(s)..."
   PLATFORM_INDEX=0
 
   for platform in "${PLATFORMS[@]}"; do
+    # Call build scripts with appropriate parameters:
+    # - All scripts: DATA_DIR, [platform-specific-option], OUTPUT_DIR
+    # - Windows also needs: USE_ENGINE
     if [[ "$platform" == "linux" ]]; then
-      bash "$CURRENT_DIR/build-linux.sh" "$DATA_DIR" "$LINUX_ARCH"
+      bash "$CURRENT_DIR/build-linux.sh" "$DATA_DIR" "$LINUX_ARCH" "."
     elif [[ "$platform" == "macos" ]]; then
-      bash "$CURRENT_DIR/build-macOS.sh" "$DATA_DIR" "$MACOS_PACKAGING"
+      bash "$CURRENT_DIR/build-macOS.sh" "$DATA_DIR" "$MACOS_PACKAGING" "."
     elif [[ "$platform" == "windows" ]]; then
-      bash "$CURRENT_DIR/build-windows.sh" "$DATA_DIR" "$WINDOWS_PACKAGING" "" "$WINDOWS_ENGINE"
+      bash "$CURRENT_DIR/build-windows.sh" "$DATA_DIR" "$WINDOWS_PACKAGING" "." "$WINDOWS_ENGINE"
     fi
     
     PLATFORM_INDEX=$((PLATFORM_INDEX + 1))
