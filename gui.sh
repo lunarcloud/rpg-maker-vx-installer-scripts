@@ -105,8 +105,7 @@ ACTIVITY="Building for ${#PLATFORMS[*]} platform(s)..."
   progressbar_update 1
   
   PLATFORM_COUNT=${#PLATFORMS[@]}
-  PROGRESS_STEP=$((100 / PLATFORM_COUNT))
-  CURRENT_PROGRESS=0
+  PLATFORM_INDEX=0
 
   for platform in "${PLATFORMS[@]}"; do
     if [[ "$platform" == "linux" ]]; then
@@ -117,7 +116,9 @@ ACTIVITY="Building for ${#PLATFORMS[*]} platform(s)..."
       bash "$CURRENT_DIR/build-windows.sh" "$DATA_DIR" "$WINDOWS_PACKAGING" "" "$WINDOWS_ENGINE"
     fi
     
-    CURRENT_PROGRESS=$((CURRENT_PROGRESS + PROGRESS_STEP))
+    PLATFORM_INDEX=$((PLATFORM_INDEX + 1))
+    # Calculate progress as percentage completed: (completed / total) * 100
+    CURRENT_PROGRESS=$((PLATFORM_INDEX * 100 / PLATFORM_COUNT))
     progressbar_update "$CURRENT_PROGRESS"
   done
   
