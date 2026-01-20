@@ -100,7 +100,7 @@ done
 
 # Build selected platforms
 # shellcheck disable=SC2034  # ACTIVITY is used by script-dialog.sh functions
-ACTIVITY="Building for ${#PLATFORMS[*]} platform(s)..."
+ACTIVITY="Building for ${#PLATFORMS[@]} platform(s)..."
 {
   progressbar_update 1
   
